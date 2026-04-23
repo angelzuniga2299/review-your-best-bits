@@ -1,96 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nova+Round&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* =========================================================
+   Insignia design system — todos los colores en HSL.
+   Paleta: naranja #f6931e, negro #201F14, crema #fffff9.
+   Fuentes: Inter (UI) + Nova Round (logo).
+   ========================================================= */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Surfaces */
+    --background: 60 100% 99%;          /* #fffff9 */
+    --foreground: 51 19% 11%;           /* #201F14 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --surface: 0 0% 100%;
+    --surface-muted: 60 33% 97%;        /* tarjetas crema */
+
+    --card: 60 100% 99%;
+    --card-foreground: 51 19% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 51 19% 11%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary = naranja Insignia */
+    --primary: 30 92% 54%;              /* #f6931e */
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 30 92% 49%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary = negro profundo */
+    --secondary: 51 19% 11%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 60 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 30 92% 54%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 71% 36%;
+    --warning: 38 92% 50%;
+    --info: 199 65% 57%;                /* #4aabd8 — color badge "por encargo" */
 
-    --radius: 0.5rem;
+    --border: 60 5% 92%;
+    --input: 60 5% 92%;
+    --ring: 30 92% 54%;
 
+    --radius: 1rem;
+
+    /* Shadows */
+    --shadow-card: 0 4px 15px hsl(0 0% 0% / 0.04);
+    --shadow-card-hover: 0 10px 32px hsl(0 0% 0% / 0.09);
+    --shadow-toast: 0 10px 40px hsl(0 0% 0% / 0.18);
+
+    /* Sidebar (no usado pero se conserva por shadcn) */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 51 19% 8%;
+    --foreground: 60 100% 99%;
+    --surface: 51 19% 11%;
+    --surface-muted: 51 19% 14%;
+    --card: 51 19% 11%;
+    --card-foreground: 60 100% 99%;
+    --popover: 51 19% 11%;
+    --popover-foreground: 60 100% 99%;
+    --primary: 30 92% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 100% 99%;
+    --secondary-foreground: 51 19% 11%;
+    --muted: 51 10% 20%;
+    --muted-foreground: 60 14% 70%;
+    --accent: 30 92% 54%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 51 10% 22%;
+    --input: 51 10% 22%;
+    --ring: 30 92% 54%;
   }
 }
 
@@ -99,7 +99,97 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html {
+    -webkit-tap-highlight-color: transparent;
   }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .brand-logo {
+    font-family: 'Nova Round', system-ui, sans-serif;
+    @apply leading-none select-none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .filter-pill {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm rounded-full border border-border bg-surface text-muted-foreground whitespace-nowrap transition-colors;
+  }
+  .filter-pill[data-active="true"] {
+    @apply bg-secondary text-secondary-foreground border-secondary;
+  }
+  .filter-pill.is-offer[data-active="true"] {
+    @apply bg-primary text-primary-foreground border-primary shadow-[0_6px_18px_hsl(var(--primary)/0.28)];
+  }
+
+  .badge-stock {
+    @apply absolute top-3 left-3 z-10 inline-flex items-center text-[10px] font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-white text-foreground shadow-sm;
+  }
+  .badge-stock--encargo { color: hsl(var(--info)); }
+  .badge-stock--low { color: hsl(var(--warning)); }
+  .badge-stock--out { color: hsl(var(--destructive)); }
+
+  .badge-new {
+    @apply absolute top-3 right-3 z-10 inline-flex items-center text-[10px] font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-white text-foreground shadow-sm;
+  }
+
+  .product-card {
+    @apply relative flex flex-col bg-surface-muted rounded-2xl overflow-hidden border border-border/60 shadow-[var(--shadow-card)] transition-all duration-200;
+  }
+  .product-card[data-clickable="true"] { @apply cursor-pointer; }
+  .product-card[data-clickable="true"]:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+}
+
+@layer utilities {
+  .bg-surface { background-color: hsl(var(--surface)); }
+  .bg-surface-muted { background-color: hsl(var(--surface-muted)); }
+  .text-info { color: hsl(var(--info)); }
+  .animate-pop {
+    animation: cart-pop 200ms ease-in-out;
+  }
+}
+
+@keyframes cart-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes fly-to-cart {
+  0% { opacity: 1; transform: scale(1) translate(0, 0); }
+  100% { opacity: 0; transform: scale(0.3) translate(var(--tx), var(--ty)); }
+}
+.fly-to-cart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  animation: fly-to-cart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes sale-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.04); }
+}
+.animate-sale {
+  animation: sale-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-sheet-in {
+  animation: sheet-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
