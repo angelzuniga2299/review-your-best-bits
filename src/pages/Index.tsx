@@ -1,9 +1,10 @@
 import { useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Search, Settings } from "lucide-react";
+import { ShoppingCart, Search, Settings, Info } from "lucide-react";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useStoreStatus } from "@/hooks/useStoreStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -18,6 +19,7 @@ import { ProductCard } from "@/components/catalog/ProductCard";
 import { ProductCardSkeleton } from "@/components/catalog/ProductCardSkeleton";
 import { ProductDetailModal } from "@/components/catalog/ProductDetailModal";
 import { CartDrawer } from "@/components/catalog/CartDrawer";
+import { StoreInfoPanel } from "@/components/catalog/StoreInfoPanel";
 
 const Index = () => {
   const { data: products, isLoading: loadingProducts } = useProducts();
@@ -30,7 +32,18 @@ const Index = () => {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const cartIconRef = useRef<HTMLButtonElement>(null);
+
+  const storeStatus = useStoreStatus(
+    settings
+      ? {
+          open_time: settings.open_time ?? "09:00",
+          close_time: settings.close_time ?? "18:00",
+          open_days: settings.open_days ?? [1, 2, 3, 4, 5, 6],
+        }
+      : null
+  );
 
   const visible = useMemo(() => {
     if (!products) return [];
@@ -190,6 +203,40 @@ const Index = () => {
             />
           </div>
 
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setInfoOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              aria-label="Información de la tienda"
+            >
+              <Info className="w-3.5 h-3.5 text-primary" />
+              Información
+            </button>
+            <button
+              type="button"
+              onClick={() => setInfoOpen(true)}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                storeStatus.isOpen
+                  ? "border border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
+                  : "border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20"
+              }`}
+              aria-label={`Estado de la tienda: ${storeStatus.label}`}
+            >
+              <span className="relative flex h-2 w-2" aria-hidden>
+                {storeStatus.isOpen && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-70" />
+                )}
+                <span
+                  className={`relative inline-flex h-2 w-2 rounded-full ${
+                    storeStatus.isOpen ? "bg-green-500" : "bg-red-500"
+                  }`}
+                />
+              </span>
+              {storeStatus.label}
+            </button>
+          </div>
+
           <FilterBar
             filters={filters ?? []}
             active={activeFilter}
@@ -254,6 +301,12 @@ const Index = () => {
         onRemove={cart.remove}
         onSetQty={cart.setQty}
         onCheckout={checkout}
+      />
+
+      <StoreInfoPanel
+        open={infoOpen}
+        onOpenChange={setInfoOpen}
+        settings={settings}
       />
     </div>
   );
