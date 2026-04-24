@@ -106,24 +106,24 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
           )}
         </div>
 
-        <footer className="shrink-0 px-5 py-4 sm:px-6 sm:py-5 border-t border-border bg-surface flex flex-col sm:flex-row gap-2">
+        <footer className="shrink-0 px-4 py-3 sm:px-6 sm:py-5 border-t border-border bg-surface grid grid-cols-1 sm:grid-cols-[auto,1fr] gap-2 sm:gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
             disabled={out}
             onClick={() => onAddToCart(p)}
-            className="h-12 px-4 rounded-xl border-2 border-secondary text-secondary font-semibold text-sm flex items-center justify-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            className="order-2 sm:order-1 h-12 px-4 rounded-xl border-2 border-secondary text-secondary font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-secondary hover:text-secondary-foreground active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none w-full sm:w-auto whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" />
-            Añadir al carrito
+            <Plus className="w-4 h-4 shrink-0" />
+            <span className="truncate">Añadir al carrito</span>
           </button>
           <button
             type="button"
             disabled={out}
             onClick={() => onOrderWhatsApp(p)}
-            className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors disabled:opacity-40 disabled:pointer-events-none shadow-md"
+            className="order-1 sm:order-2 h-12 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none shadow-md w-full whitespace-nowrap"
           >
-            <MessageCircle className="w-5 h-5" />
-            Ordenar por WhatsApp
+            <MessageCircle className="w-5 h-5 shrink-0" />
+            <span className="truncate">Ordenar por WhatsApp</span>
           </button>
         </footer>
       </div>

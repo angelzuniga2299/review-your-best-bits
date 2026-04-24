@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
+import headerBg from "@/assets/header-bg.jpg";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
