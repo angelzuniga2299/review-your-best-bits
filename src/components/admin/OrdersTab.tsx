@@ -26,6 +26,8 @@ export function OrdersTab() {
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["admin-orders"],
+    refetchOnWindowFocus: true,
+    refetchInterval: 8000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
