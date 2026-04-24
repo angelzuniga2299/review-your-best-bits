@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
-import headerBg from "@/assets/header-bg.jpg";
+import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -103,17 +103,67 @@ const Index = () => {
     return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
   }
 
-  function orderSingleByWhatsApp(p: Product) {
+  async function saveOrder(
+    items: Array<{
+      productId: string;
+      name: string;
+      price: number;
+      qty: number;
+      currency: Product["currency"];
+    }>
+  ) {
+    const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const currency = items[0]?.currency ?? cart.currency;
+
+    const { error } = await supabase.from("orders").insert({
+      items,
+      total,
+      currency,
+      status: "pendiente",
+    });
+
+    if (error) {
+      console.error("Order insert failed:", error);
+      throw error;
+    }
+  }
+
+  async function orderSingleByWhatsApp(p: Product) {
     const price = getSalePrice(p);
+    const items = [
+      {
+        productId: p.id,
+        name: p.name,
+        price,
+        qty: 1,
+        currency: p.currency,
+      },
+    ];
     const msg = `Hola, me interesa este producto:\n\n*${p.name}*\nPrecio: ${formatCurrency(price, p.currency)}${
       p.por_encargo ? "\n(Por encargo)" : ""
     }\n\n¿Está disponible?`;
+
+    try {
+      await saveOrder(items);
+    } catch {
+      toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      return;
+    }
+
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
+    toast.success("Pedido registrado correctamente");
   }
 
   async function checkout() {
     if (cart.items.length === 0) return;
+    const items = cart.items.map((it) => ({
+      productId: it.productId,
+      name: it.name,
+      price: it.price,
+      qty: it.qty,
+      currency: it.currency,
+    }));
     const lines = cart.items
       .map(
         (it) =>
@@ -127,21 +177,9 @@ const Index = () => {
 
     // Persist order in DB FIRST so the seller always has a record,
     // even if the user never reaches WhatsApp.
-    const { error } = await supabase.from("orders").insert({
-      items: cart.items.map((it) => ({
-        productId: it.productId,
-        name: it.name,
-        price: it.price,
-        qty: it.qty,
-        currency: it.currency,
-      })),
-      total: cart.total,
-      currency: cart.currency,
-      status: "pendiente",
-    });
-
-    if (error) {
-      console.error("Order insert failed:", error);
+    try {
+      await saveOrder(items);
+    } catch {
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
       return;
     }
