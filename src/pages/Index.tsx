@@ -211,7 +211,10 @@ const Index = () => {
       } else {
         toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
       }
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      ]);
       setIsProcessing(false);
       return;
     }
