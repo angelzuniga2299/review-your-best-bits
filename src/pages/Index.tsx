@@ -151,12 +151,19 @@ const Index = () => {
 
     try {
       await saveOrder(items);
-    } catch {
-      toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+    } catch (err) {
+      const m = (err as { message?: string })?.message ?? "";
+      if (/Stock insuficiente/i.test(m)) {
+        toast.error("Stock insuficiente. El catálogo se actualizó.");
+      } else {
+        toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      }
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsProcessing(false);
       return;
     }
 
+    await queryClient.invalidateQueries({ queryKey: ["products"] });
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
     toast.success("Pedido registrado correctamente");
@@ -189,12 +196,19 @@ const Index = () => {
     // even if the user never reaches WhatsApp.
     try {
       await saveOrder(items);
-    } catch {
-      toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+    } catch (err) {
+      const m = (err as { message?: string })?.message ?? "";
+      if (/Stock insuficiente/i.test(m)) {
+        toast.error("Stock insuficiente para algún producto. Revisá el carrito.");
+      } else {
+        toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      }
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsProcessing(false);
       return;
     }
 
+    await queryClient.invalidateQueries({ queryKey: ["products"] });
     window.open(whatsAppLink(msg), "_blank", "noopener");
     cart.clear();
     setCartOpen(false);
