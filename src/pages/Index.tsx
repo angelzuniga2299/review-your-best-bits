@@ -34,6 +34,8 @@ const Index = () => {
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
   const cartIconRef = useRef<HTMLButtonElement>(null);
 
   const storeStatus = useStoreStatus(
@@ -129,6 +131,8 @@ const Index = () => {
   }
 
   async function orderSingleByWhatsApp(p: Product) {
+    if (isProcessing) return;
+    setIsProcessing(true);
     const price = getSalePrice(p);
     const items = [
       {
@@ -147,16 +151,20 @@ const Index = () => {
       await saveOrder(items);
     } catch {
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      setIsProcessing(false);
       return;
     }
 
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
     toast.success("Pedido registrado correctamente");
+    setConfirmation("Pedido enviado correctamente");
+    setIsProcessing(false);
   }
 
   async function checkout() {
-    if (cart.items.length === 0) return;
+    if (cart.items.length === 0 || isProcessing) return;
+    setIsProcessing(true);
     const items = cart.items.map((it) => ({
       productId: it.productId,
       name: it.name,
@@ -181,6 +189,7 @@ const Index = () => {
       await saveOrder(items);
     } catch {
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      setIsProcessing(false);
       return;
     }
 
@@ -188,6 +197,8 @@ const Index = () => {
     cart.clear();
     setCartOpen(false);
     toast.success("Pedido registrado y enviado por WhatsApp");
+    setConfirmation("Pedido enviado correctamente");
+    setIsProcessing(false);
   }
 
   return (
