@@ -55,25 +55,28 @@ export function ProductCard({ product: p, onOpen, onAdd }: Props) {
             <h3 className="font-bold text-base leading-snug line-clamp-2 flex-1">
               {p.name}
             </h3>
-          </div>
-
-          <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-lg font-semibold tracking-tight">
+            <span
+              className={cn(
+                "text-base font-semibold tracking-tight shrink-0 whitespace-nowrap",
+                onSale ? "text-secondary" : "text-foreground"
+              )}
+            >
               {formatCurrency(sale, p.currency)}
             </span>
-            {onSale && (
-              <>
-                <span className="text-sm text-muted-foreground line-through">
-                  {formatCurrency(list, p.currency)}
-                </span>
-                <span className="animate-sale text-xs">-{p.discount_pct}%</span>
-              </>
-            )}
           </div>
 
-          {p.description && (
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-              {p.description}
+          {onSale && (
+            <div className="flex items-center justify-end gap-2 mt-1">
+              <span className="text-xs text-muted-foreground line-through">
+                {formatCurrency(list, p.currency)}
+              </span>
+              <span className="animate-sale text-xs">-{p.discount_pct}%</span>
+            </div>
+          )}
+
+          {p.warranty && (
+            <p className="text-sm text-muted-foreground mt-2 line-clamp-1">
+              <strong className="text-foreground/80 font-medium">Garantía:</strong> {p.warranty}
             </p>
           )}
         </div>
