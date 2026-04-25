@@ -30,6 +30,7 @@ const BADGE: Record<OrderStatus, string> = {
 export function OrdersTab() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [selected, setSelected] = useState<Order | null>(null);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["admin-orders"],
