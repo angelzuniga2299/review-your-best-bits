@@ -8,9 +8,10 @@ type Props = {
   onClose: () => void;
   onOrderWhatsApp: (p: Product) => void;
   onAddToCart: (p: Product) => void;
+  isProcessing?: boolean;
 };
 
-export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToCart }: Props) {
+export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToCart, isProcessing = false }: Props) {
   useEffect(() => {
     if (!product) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -109,7 +110,7 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
         <footer className="shrink-0 px-4 py-3 sm:px-6 sm:py-5 border-t border-border bg-surface grid grid-cols-1 sm:grid-cols-[auto,1fr] gap-2 sm:gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
-            disabled={out}
+            disabled={out || isProcessing}
             onClick={() => onAddToCart(p)}
             className="order-2 sm:order-1 h-12 px-4 rounded-xl border-2 border-secondary text-secondary font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-secondary hover:text-secondary-foreground active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none w-full sm:w-auto whitespace-nowrap"
           >
@@ -118,12 +119,13 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
           </button>
           <button
             type="button"
-            disabled={out}
+            disabled={out || isProcessing}
+            aria-busy={isProcessing}
             onClick={() => onOrderWhatsApp(p)}
             className="order-1 sm:order-2 h-12 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none shadow-md w-full whitespace-nowrap"
           >
             <MessageCircle className="w-5 h-5 shrink-0" />
-            <span className="truncate">Ordenar por WhatsApp</span>
+            <span className="truncate">{isProcessing ? "Procesando..." : "Ordenar por WhatsApp"}</span>
           </button>
         </footer>
       </div>

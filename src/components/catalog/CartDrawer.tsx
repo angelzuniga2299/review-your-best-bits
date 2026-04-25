@@ -12,9 +12,10 @@ type Props = {
   onRemove: (productId: string) => void;
   onSetQty: (productId: string, qty: number) => void;
   onCheckout: () => void;
+  isProcessing?: boolean;
 };
 
-export function CartDrawer({ open, items, total, currency, onClose, onRemove, onSetQty, onCheckout }: Props) {
+export function CartDrawer({ open, items, total, currency, onClose, onRemove, onSetQty, onCheckout, isProcessing = false }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -112,11 +113,12 @@ export function CartDrawer({ open, items, total, currency, onClose, onRemove, on
           <button
             type="button"
             onClick={onCheckout}
-            disabled={items.length === 0}
+            disabled={items.length === 0 || isProcessing}
+            aria-busy={isProcessing}
             className="w-full bg-secondary text-secondary-foreground py-4 rounded-xl font-semibold shadow-lg text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-40 disabled:pointer-events-none"
           >
             <MessageCircle className="w-5 h-5" />
-            Finalizar pedido por WhatsApp
+            {isProcessing ? "Procesando..." : "Finalizar pedido por WhatsApp"}
           </button>
         </footer>
       </div>
