@@ -166,7 +166,12 @@ const Index = () => {
       return;
     }
 
-    await queryClient.invalidateQueries({ queryKey: ["products"] });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
+    ]);
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
     toast.success("Pedido registrado correctamente");
