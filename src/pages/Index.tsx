@@ -34,6 +34,8 @@ const Index = () => {
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
   const cartIconRef = useRef<HTMLButtonElement>(null);
 
   const storeStatus = useStoreStatus(
@@ -129,6 +131,8 @@ const Index = () => {
   }
 
   async function orderSingleByWhatsApp(p: Product) {
+    if (isProcessing) return;
+    setIsProcessing(true);
     const price = getSalePrice(p);
     const items = [
       {
@@ -147,16 +151,20 @@ const Index = () => {
       await saveOrder(items);
     } catch {
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      setIsProcessing(false);
       return;
     }
 
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
     toast.success("Pedido registrado correctamente");
+    setConfirmation("Pedido enviado correctamente");
+    setIsProcessing(false);
   }
 
   async function checkout() {
-    if (cart.items.length === 0) return;
+    if (cart.items.length === 0 || isProcessing) return;
+    setIsProcessing(true);
     const items = cart.items.map((it) => ({
       productId: it.productId,
       name: it.name,
@@ -181,6 +189,7 @@ const Index = () => {
       await saveOrder(items);
     } catch {
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      setIsProcessing(false);
       return;
     }
 
@@ -188,6 +197,8 @@ const Index = () => {
     cart.clear();
     setCartOpen(false);
     toast.success("Pedido registrado y enviado por WhatsApp");
+    setConfirmation("Pedido enviado correctamente");
+    setIsProcessing(false);
   }
 
   return (
@@ -345,6 +356,7 @@ const Index = () => {
           handleAdd(p);
           setDetail(null);
         }}
+        isProcessing={isProcessing}
       />
 
       <CartDrawer
@@ -356,6 +368,7 @@ const Index = () => {
         onRemove={cart.remove}
         onSetQty={cart.setQty}
         onCheckout={checkout}
+        isProcessing={isProcessing}
       />
 
       <StoreInfoPanel
@@ -363,6 +376,40 @@ const Index = () => {
         onOpenChange={setInfoOpen}
         settings={settings}
       />
+
+      {confirmation && (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-sheet-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="order-confirmation-title"
+          onClick={() => setConfirmation(null)}
+        >
+          <div
+            className="bg-surface-muted rounded-2xl shadow-2xl border border-border max-w-sm w-full p-6 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 rounded-full bg-primary/15 text-primary mx-auto mb-4 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h3 id="order-confirmation-title" className="text-lg font-bold mb-1">
+              {confirmation}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-5">
+              Te contactaremos por WhatsApp para coordinar la entrega.
+            </p>
+            <button
+              type="button"
+              onClick={() => setConfirmation(null)}
+              className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
