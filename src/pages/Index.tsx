@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreStatus } from "@/hooks/useStoreStatus";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   formatCurrency,
@@ -28,6 +29,7 @@ const Index = () => {
   const { data: settings } = useSettings();
   const { isAdmin } = useAuth();
   const cart = useCart();
+  const queryClient = useQueryClient();
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
@@ -149,12 +151,27 @@ const Index = () => {
 
     try {
       await saveOrder(items);
-    } catch {
-      toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+    } catch (err) {
+      const m = (err as { message?: string })?.message ?? "";
+      if (/Stock insuficiente/i.test(m)) {
+        toast.error("Stock insuficiente. El catálogo se actualizó.");
+      } else {
+        toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      ]);
       setIsProcessing(false);
       return;
     }
 
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
+    ]);
     window.open(whatsAppLink(msg), "_blank", "noopener");
     setDetail(null);
     toast.success("Pedido registrado correctamente");
@@ -187,12 +204,27 @@ const Index = () => {
     // even if the user never reaches WhatsApp.
     try {
       await saveOrder(items);
-    } catch {
-      toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+    } catch (err) {
+      const m = (err as { message?: string })?.message ?? "";
+      if (/Stock insuficiente/i.test(m)) {
+        toast.error("Stock insuficiente para algún producto. Revisá el carrito.");
+      } else {
+        toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
+      }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      ]);
       setIsProcessing(false);
       return;
     }
 
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
+    ]);
     window.open(whatsAppLink(msg), "_blank", "noopener");
     cart.clear();
     setCartOpen(false);

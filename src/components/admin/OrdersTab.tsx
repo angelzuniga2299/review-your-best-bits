@@ -53,6 +53,9 @@ export function OrdersTab() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-orders"] });
+      qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
       toast.success("Estado actualizado");
     },
     onError: (e: Error) => toast.error(e.message),
