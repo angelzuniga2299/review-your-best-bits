@@ -29,6 +29,7 @@ const Index = () => {
   const { data: settings } = useSettings();
   const { isAdmin } = useAuth();
   const cart = useCart();
+  const queryClient = useQueryClient();
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
