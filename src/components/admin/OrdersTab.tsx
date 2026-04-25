@@ -4,6 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Order, OrderStatus } from "@/lib/catalog";
 import { formatCurrency } from "@/lib/catalog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const STATUSES: { id: OrderStatus | "all"; label: string }[] = [
   { id: "all", label: "Todos" },
@@ -23,6 +30,7 @@ const BADGE: Record<OrderStatus, string> = {
 export function OrdersTab() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [selected, setSelected] = useState<Order | null>(null);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["admin-orders"],
@@ -77,7 +85,16 @@ export function OrdersTab() {
           {list.map((o) => (
             <article
               key={o.id}
-              className="bg-surface border border-border rounded-xl p-4 space-y-3"
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelected(o)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelected(o);
+                }
+              }}
+              className="bg-surface border border-border rounded-xl p-4 space-y-3 cursor-pointer hover:border-primary/40 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40"
             >
               <div className="flex justify-between items-start gap-3">
                 <div>
@@ -112,9 +129,11 @@ export function OrdersTab() {
                 </span>
                 <select
                   value={o.status}
-                  onChange={(e) =>
-                    updateStatus.mutate({ id: o.id, status: e.target.value as OrderStatus })
-                  }
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    updateStatus.mutate({ id: o.id, status: e.target.value as OrderStatus });
+                  }}
                   className="text-xs border border-border rounded-lg px-2 py-1 bg-surface"
                 >
                   {STATUSES.filter((s) => s.id !== "all").map((s) => (
@@ -128,6 +147,66 @@ export function OrdersTab() {
           ))}
         </div>
       )}
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-md bg-surface">
+          {selected && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-base">{selected.public_id}</DialogTitle>
+                <DialogDescription className="text-xs">
+                  {new Date(selected.created_at).toLocaleString("es-CU", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Estado</span>
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md ${BADGE[selected.status]}`}
+                  >
+                    {selected.status}
+                  </span>
+                </div>
+
+                <div className="border border-border rounded-xl divide-y divide-border">
+                  {selected.items.map((it, i) => (
+                    <div key={i} className="p-3 flex justify-between items-start gap-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{it.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatCurrency(it.price, it.currency)} × {it.qty}
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold shrink-0">
+                        {formatCurrency(it.price * it.qty, it.currency)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {(selected.customer_name || selected.customer_phone || selected.notes) && (
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {selected.customer_name && <p>Cliente: {selected.customer_name}</p>}
+                    {selected.customer_phone && <p>Teléfono: {selected.customer_phone}</p>}
+                    {selected.notes && <p>Notas: {selected.notes}</p>}
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center pt-3 border-t border-border">
+                  <span className="text-sm text-muted-foreground">Total</span>
+                  <span className="text-base font-bold">
+                    {formatCurrency(selected.total, selected.currency)}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
