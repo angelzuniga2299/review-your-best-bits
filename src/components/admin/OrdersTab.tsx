@@ -4,6 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Order, OrderStatus } from "@/lib/catalog";
 import { formatCurrency } from "@/lib/catalog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const STATUSES: { id: OrderStatus | "all"; label: string }[] = [
   { id: "all", label: "Todos" },
