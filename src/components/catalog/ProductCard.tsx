@@ -120,3 +120,10 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
     </article>
   );
 }
+
+/**
+ * Memoized so the catalog grid doesn't re-render every card when
+ * unrelated state (search, filter, cart count) changes in the parent.
+ * Only re-renders when this specific product or its callbacks change.
+ */
+export const ProductCard = memo(ProductCardImpl);
