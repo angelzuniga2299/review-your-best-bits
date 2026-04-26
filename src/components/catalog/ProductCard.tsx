@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Plus, MessageCircle } from "lucide-react";
 import type { Product } from "@/lib/catalog";
 import { formatCurrency, getListPrice, getSalePrice, isOutOfStock } from "@/lib/catalog";
@@ -10,7 +11,7 @@ type Props = {
   onAdd: (p: Product, sourceEl: HTMLElement) => void;
 };
 
-export function ProductCard({ product: p, onOpen, onAdd }: Props) {
+function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
   const out = isOutOfStock(p);
   const list = getListPrice(p);
   const sale = getSalePrice(p);
