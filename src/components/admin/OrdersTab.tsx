@@ -195,6 +195,9 @@ export function OrdersTab() {
                 </select>
               </div>
             </article>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       )}
