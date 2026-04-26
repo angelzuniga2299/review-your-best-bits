@@ -151,6 +151,8 @@
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-2px);
   }
+  .product-card.is-sold-out { @apply opacity-75 cursor-not-allowed; }
+  .product-card.is-sold-out:hover { transform: none; box-shadow: var(--shadow-card); }
 }
 
 @layer utilities {
