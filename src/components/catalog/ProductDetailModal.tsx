@@ -94,7 +94,9 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
             {out ? (
               <span className="text-destructive font-semibold">Sin stock</span>
             ) : enc ? (
-              <span className="text-info font-semibold">Por encargo · 7-15 días</span>
+              <span className="text-info font-semibold">
+                Por encargo · {p.delivery_time?.trim() || "7-15 días"}
+              </span>
             ) : (
               <span>{p.stock} unidades disponibles</span>
             )}
