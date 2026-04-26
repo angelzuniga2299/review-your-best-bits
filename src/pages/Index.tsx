@@ -39,6 +39,8 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const cartIconRef = useRef<HTMLButtonElement>(null);
+  // Synchronous lock to block double-clicks before React re-renders.
+  const processingLockRef = useRef(false);
 
   const storeStatus = useStoreStatus(
     settings
