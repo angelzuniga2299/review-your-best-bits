@@ -50,7 +50,6 @@ export function useSettings() {
           open_time: "09:00",
           close_time: "18:00",
           open_days: [1, 2, 3, 4, 5, 6],
-          commission_rate: 0.05,
         };
       }
       return data as AppSettings;
