@@ -109,82 +109,100 @@ const Index = () => {
     return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
   }
 
-  async function saveOrder(
-    items: Array<{
-      productId: string;
-      name: string;
-      price: number;
-      qty: number;
-      currency: Product["currency"];
-    }>
-  ) {
-    const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const currency = items[0]?.currency ?? cart.currency;
+  type OrderItem = {
+    productId: string;
+    name: string;
+    price: number;
+    qty: number;
+    currency: Product["currency"];
+  };
 
-    const { error } = await supabase.from("orders").insert({
-      items,
-      total,
-      currency,
-      status: "pendiente",
-    });
+  /**
+   * Single, centralized order creation flow.
+   * - Synchronous lock (ref) blocks double-clicks before React re-renders.
+   * - Persists order in DB FIRST so the seller always has a record.
+   * - On success: invalidates caches, opens WhatsApp, runs onSuccess side-effects.
+   * - On failure: shows specific error, refreshes catalog so UI matches DB,
+   *   restores button state so the user can retry.
+   */
+  async function createOrder(opts: {
+    items: OrderItem[];
+    whatsappMessage: string;
+    onSuccess?: () => void;
+    successToast: string;
+  }) {
+    if (processingLockRef.current) return;
+    if (opts.items.length === 0) return;
 
-    if (error) {
-      console.error("Order insert failed:", error);
-      throw error;
-    }
-  }
-
-  async function orderSingleByWhatsApp(p: Product) {
-    if (isProcessing) return;
+    processingLockRef.current = true;
     setIsProcessing(true);
-    const price = getSalePrice(p);
-    const items = [
-      {
-        productId: p.id,
-        name: p.name,
-        price,
-        qty: 1,
-        currency: p.currency,
-      },
-    ];
-    const msg = `Hola, me interesa este producto:\n\n*${p.name}*\nPrecio: ${formatCurrency(price, p.currency)}${
-      p.por_encargo ? "\n(Por encargo)" : ""
-    }\n\n¿Está disponible?`;
+
+    const total = opts.items.reduce((s, it) => s + it.price * it.qty, 0);
+    const currency = opts.items[0]?.currency ?? cart.currency;
 
     try {
-      await saveOrder(items);
+      const { error } = await supabase.from("orders").insert({
+        items: opts.items,
+        total,
+        currency,
+        status: "pendiente",
+      });
+      if (error) throw error;
     } catch (err) {
       const m = (err as { message?: string })?.message ?? "";
       if (/Stock insuficiente/i.test(m)) {
         toast.error("Stock insuficiente. El catálogo se actualizó.");
       } else {
+        console.error("Order insert failed:", err);
         toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
       }
+      // Refresh catalog so UI matches DB, then re-enable button for retry.
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["products"] }),
         queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
       ]);
+      processingLockRef.current = false;
       setIsProcessing(false);
       return;
     }
 
+    // Success: refresh everything that depends on stock / orders.
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["products"] }),
       queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
       queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
       queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
     ]);
-    window.open(whatsAppLink(msg), "_blank", "noopener");
-    setDetail(null);
-    toast.success("Pedido registrado correctamente");
+
+    window.open(whatsAppLink(opts.whatsappMessage), "_blank", "noopener");
+    opts.onSuccess?.();
+    toast.success(opts.successToast);
     setConfirmation("Pedido enviado correctamente");
+    processingLockRef.current = false;
     setIsProcessing(false);
   }
 
-  async function checkout() {
-    if (cart.items.length === 0 || isProcessing) return;
-    setIsProcessing(true);
-    const items = cart.items.map((it) => ({
+  function orderSingleByWhatsApp(p: Product) {
+    if (processingLockRef.current) return;
+    const price = getSalePrice(p);
+    const items: OrderItem[] = [
+      { productId: p.id, name: p.name, price, qty: 1, currency: p.currency },
+    ];
+    const msg = `Hola, me interesa este producto:\n\n*${p.name}*\nPrecio: ${formatCurrency(price, p.currency)}${
+      p.por_encargo ? "\n(Por encargo)" : ""
+    }\n\n¿Está disponible?`;
+    void createOrder({
+      items,
+      whatsappMessage: msg,
+      successToast: "Pedido registrado correctamente",
+      onSuccess: () => setDetail(null),
+    });
+  }
+
+  function checkout() {
+    if (processingLockRef.current) return;
+    if (cart.items.length === 0) return;
+    const items: OrderItem[] = cart.items.map((it) => ({
       productId: it.productId,
       name: it.name,
       price: it.price,
@@ -201,38 +219,15 @@ const Index = () => {
       cart.total,
       cart.currency
     )}`;
-
-    // Persist order in DB FIRST so the seller always has a record,
-    // even if the user never reaches WhatsApp.
-    try {
-      await saveOrder(items);
-    } catch (err) {
-      const m = (err as { message?: string })?.message ?? "";
-      if (/Stock insuficiente/i.test(m)) {
-        toast.error("Stock insuficiente para algún producto. Revisá el carrito.");
-      } else {
-        toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
-      }
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["products"] }),
-        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
-      ]);
-      setIsProcessing(false);
-      return;
-    }
-
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["products"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
-    ]);
-    window.open(whatsAppLink(msg), "_blank", "noopener");
-    cart.clear();
-    setCartOpen(false);
-    toast.success("Pedido registrado y enviado por WhatsApp");
-    setConfirmation("Pedido enviado correctamente");
-    setIsProcessing(false);
+    void createOrder({
+      items,
+      whatsappMessage: msg,
+      successToast: "Pedido registrado y enviado por WhatsApp",
+      onSuccess: () => {
+        cart.clear();
+        setCartOpen(false);
+      },
+    });
   }
 
   return (
