@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
@@ -66,7 +66,7 @@ const Index = () => {
     });
   }, [products, activeFilter, search]);
 
-  function flyToCart(sourceEl: HTMLElement) {
+  const flyToCart = useCallback((sourceEl: HTMLElement) => {
     const target = cartIconRef.current;
     if (!target) return;
     const sRect = sourceEl.getBoundingClientRect();
@@ -91,23 +91,36 @@ const Index = () => {
     setTimeout(() => ghost.remove(), 800);
     target.classList.add("animate-pop");
     setTimeout(() => target.classList.remove("animate-pop"), 300);
-  }
+  }, []);
 
-  function handleAdd(p: Product, sourceEl?: HTMLElement) {
-    if (isOutOfStock(p)) {
-      toast.error("Producto sin stock");
-      return;
-    }
-    const ok = cart.add(p, 1);
-    if (!ok) return;
-    if (sourceEl) flyToCart(sourceEl);
-    toast.success(`${p.name} añadido al carrito`);
-  }
+  const cartAdd = cart.add;
+  const handleAdd = useCallback(
+    (p: Product, sourceEl?: HTMLElement) => {
+      if (isOutOfStock(p)) {
+        toast.error("Producto sin stock");
+        return;
+      }
+      const ok = cartAdd(p, 1);
+      if (!ok) return;
+      if (sourceEl) flyToCart(sourceEl);
+      toast.success(`${p.name} añadido al carrito`);
+    },
+    [cartAdd, flyToCart]
+  );
 
-  function whatsAppLink(text: string) {
-    const num = settings?.whatsapp_number ?? "5352996275";
-    return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
-  }
+  // Stable handler for ProductCard `onAdd` (always passes the source element).
+  const handleCardAdd = useCallback(
+    (prod: Product, src: HTMLElement) => handleAdd(prod, src),
+    [handleAdd]
+  );
+
+  const whatsAppLink = useCallback(
+    (text: string) => {
+      const num = settings?.whatsapp_number ?? "5352996275";
+      return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+    },
+    [settings?.whatsapp_number]
+  );
 
   type OrderItem = {
     productId: string;
@@ -359,7 +372,7 @@ const Index = () => {
                 key={p.id}
                 product={p}
                 onOpen={setDetail}
-                onAdd={(prod, src) => handleAdd(prod, src)}
+                onAdd={handleCardAdd}
               />
             ))}
           </div>

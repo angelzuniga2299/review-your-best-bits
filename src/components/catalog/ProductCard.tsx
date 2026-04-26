@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Plus, MessageCircle } from "lucide-react";
 import type { Product } from "@/lib/catalog";
 import { formatCurrency, getListPrice, getSalePrice, isOutOfStock } from "@/lib/catalog";
@@ -10,7 +11,7 @@ type Props = {
   onAdd: (p: Product, sourceEl: HTMLElement) => void;
 };
 
-export function ProductCard({ product: p, onOpen, onAdd }: Props) {
+function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
   const out = isOutOfStock(p);
   const list = getListPrice(p);
   const sale = getSalePrice(p);
@@ -119,3 +120,10 @@ export function ProductCard({ product: p, onOpen, onAdd }: Props) {
     </article>
   );
 }
+
+/**
+ * Memoized so the catalog grid doesn't re-render every card when
+ * unrelated state (search, filter, cart count) changes in the parent.
+ * Only re-renders when this specific product or its callbacks change.
+ */
+export const ProductCard = memo(ProductCardImpl);

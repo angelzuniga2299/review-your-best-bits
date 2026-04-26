@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CartItem, Product } from "@/lib/catalog";
 import { getSalePrice, isOutOfStock } from "@/lib/catalog";
 
@@ -80,9 +80,20 @@ export function useCart() {
 
   const clear = useCallback(() => setItems([]), []);
 
-  const count = items.reduce((acc, x) => acc + x.qty, 0);
-  const total = items.reduce((acc, x) => acc + x.price * x.qty, 0);
-  const currency = items[0]?.currency ?? "USD";
+  const { count, total, currency } = useMemo(() => {
+    let c = 0;
+    let t = 0;
+    for (const x of items) {
+      c += x.qty;
+      t += x.price * x.qty;
+    }
+    return { count: c, total: t, currency: items[0]?.currency ?? "USD" };
+  }, [items]);
 
-  return { items, add, remove, setQty, clear, count, total, currency };
+  // Memoize return so consumers see a stable object reference when nothing
+  // changed — keeps React.memo / useEffect deps from firing unnecessarily.
+  return useMemo(
+    () => ({ items, add, remove, setQty, clear, count, total, currency }),
+    [items, add, remove, setQty, clear, count, total, currency]
+  );
 }
