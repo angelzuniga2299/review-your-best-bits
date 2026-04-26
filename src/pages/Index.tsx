@@ -372,7 +372,7 @@ const Index = () => {
                 key={p.id}
                 product={p}
                 onOpen={setDetail}
-                onAdd={(prod, src) => handleAdd(prod, src)}
+                onAdd={handleCardAdd}
               />
             ))}
           </div>
