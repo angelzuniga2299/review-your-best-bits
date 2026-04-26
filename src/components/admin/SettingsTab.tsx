@@ -41,7 +41,6 @@ export function SettingsTab() {
           business_address: form.business_address,
           open_time: form.open_time,
           close_time: form.close_time,
-          commission_rate: form.commission_rate,
         })
         .eq("id", true);
       if (error) throw error;
@@ -112,17 +111,7 @@ export function SettingsTab() {
         </Field>
       </div>
 
-      <Field label="Comisión (0.05 = 5%)">
-        <input
-          type="number"
-          step="0.01"
-          min={0}
-          max={1}
-          value={form.commission_rate}
-          onChange={(e) => set("commission_rate", Number(e.target.value))}
-          className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface"
-        />
-      </Field>
+      {/* Comisiones eliminadas del panel vendedor */}
 
       <button
         type="button"

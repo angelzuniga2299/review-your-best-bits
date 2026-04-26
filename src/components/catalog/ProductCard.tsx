@@ -19,12 +19,14 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
 
   return (
     <article
-      className="product-card h-full"
-      data-clickable="true"
-      onClick={() => onOpen(p)}
+      className={cn("product-card h-full", out && "is-sold-out")}
+      data-clickable={out ? "false" : "true"}
+      onClick={() => !out && onOpen(p)}
       role="button"
-      tabIndex={0}
+      tabIndex={out ? -1 : 0}
+      aria-disabled={out}
       onKeyDown={(e) => {
+        if (out) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onOpen(p);
@@ -40,7 +42,10 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
             loading="lazy"
             width={400}
             height={260}
-            className="w-full h-full object-cover"
+            className={cn(
+              "w-full h-full object-cover transition-[filter,opacity]",
+              out && "grayscale opacity-70"
+            )}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -48,12 +53,19 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
           </div>
         )}
         <ProductBadges p={p} />
+        {out && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/10 pointer-events-none">
+            <span className="px-3 py-1 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold uppercase tracking-wide shadow">
+              Agotado
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="p-5 flex-1 flex flex-col justify-between gap-4">
         <div>
-          <div className="flex items-baseline justify-between gap-3 mb-1">
-            <h3 className="font-bold text-base leading-snug line-clamp-2 flex-1">
+          <div className="flex items-baseline justify-between gap-3 mb-1 flex-nowrap">
+            <h3 className="font-bold text-base leading-snug truncate flex-1 min-w-0">
               {p.name}
             </h3>
             <span

@@ -63,6 +63,40 @@ export function OrdersTab() {
 
   const list = (orders ?? []).filter((o) => filter === "all" || o.status === filter);
 
+  // Group orders by day label (Hoy, Ayer, fecha) preserving sort order.
+  const groups = (() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const buckets = new Map<string, { label: string; orders: Order[]; total: number }>();
+
+    function labelFor(d: Date): { key: string; label: string } {
+      const day = new Date(d);
+      day.setHours(0, 0, 0, 0);
+      if (day.getTime() === today.getTime()) return { key: "0-today", label: "Hoy" };
+      if (day.getTime() === yesterday.getTime()) return { key: "1-yest", label: "Ayer" };
+      const key = `2-${day.toISOString().slice(0, 10)}`;
+      const label = day.toLocaleDateString("es-CU", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      });
+      return { key, label };
+    }
+
+    for (const o of list) {
+      const { key, label } = labelFor(new Date(o.created_at));
+      const bucket = buckets.get(key) ?? { label, orders: [], total: 0 };
+      bucket.orders.push(o);
+      // Daily total only counts confirmed sales to be meaningful.
+      if (o.status === "vendido") bucket.total += Number(o.total) || 0;
+      buckets.set(key, bucket);
+    }
+    return Array.from(buckets.entries()).sort(([a], [b]) => a.localeCompare(b));
+  })();
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
@@ -84,8 +118,22 @@ export function OrdersTab() {
       ) : list.length === 0 ? (
         <p className="text-sm text-muted-foreground py-8 text-center">Sin pedidos.</p>
       ) : (
-        <div className="space-y-3">
-          {list.map((o) => (
+        <div className="space-y-6">
+          {groups.map(([key, group]) => (
+            <section key={key} className="space-y-3">
+              <header className="flex items-baseline justify-between gap-3 px-1">
+                <h3 className="text-sm font-bold capitalize">{group.label}</h3>
+                <span className="text-xs text-muted-foreground">
+                  {group.orders.length} pedido{group.orders.length === 1 ? "" : "s"}
+                  {group.total > 0 && (
+                    <span className="ml-2 text-foreground font-semibold">
+                      · {formatCurrency(group.total, group.orders[0]?.currency ?? "USD")}
+                    </span>
+                  )}
+                </span>
+              </header>
+              <div className="space-y-3">
+                {group.orders.map((o) => (
             <article
               key={o.id}
               role="button"
@@ -147,6 +195,9 @@ export function OrdersTab() {
                 </select>
               </div>
             </article>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       )}

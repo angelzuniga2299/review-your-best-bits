@@ -246,15 +246,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border overflow-hidden">
-        {/* Background image + overlay */}
+        {/* Background image (clean, no overlay/blur) */}
         <div
           aria-hidden
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${headerBg})` }}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75 backdrop-blur-[2px]"
         />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-4">
@@ -263,7 +259,7 @@ const Index = () => {
               <h1 className="brand-logo text-3xl sm:text-4xl text-white drop-shadow-md">
                 {settings?.business_name ?? "Insignia"}
               </h1>
-              <p className="text-sm text-white/80 mt-1.5 leading-snug">
+              <p className="text-sm text-white/90 mt-1.5 leading-snug drop-shadow">
                 El futuro de tu confort, listo para ordenar
               </p>
             </div>

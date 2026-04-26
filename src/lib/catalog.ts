@@ -9,6 +9,7 @@ export type Product = {
   currency: Currency;
   stock: number;
   por_encargo: boolean;
+  delivery_time: string | null;
   is_on_sale: boolean;
   discount_pct: number;
   image_url: string | null;
@@ -34,7 +35,6 @@ export type AppSettings = {
   open_time: string;
   close_time: string;
   open_days: number[];
-  commission_rate: number;
 };
 
 export type CartItem = {
@@ -95,5 +95,6 @@ export function formatCurrency(amount: number, currency: Currency = "USD"): stri
     minimumFractionDigits: value % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   });
-  return currency === "CUP" ? `${formatted} CUP` : `$${formatted}`;
+  // Always prefix with currency code so the unit is unambiguous in any view.
+  return `${currency} ${formatted}`;
 }

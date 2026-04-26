@@ -20,7 +20,6 @@ export type Database = {
           business_info: string
           business_name: string
           close_time: string
-          commission_rate: number
           id: boolean
           open_days: number[]
           open_time: string
@@ -32,7 +31,6 @@ export type Database = {
           business_info?: string
           business_name?: string
           close_time?: string
-          commission_rate?: number
           id?: boolean
           open_days?: number[]
           open_time?: string
@@ -44,7 +42,6 @@ export type Database = {
           business_info?: string
           business_name?: string
           close_time?: string
-          commission_rate?: number
           id?: boolean
           open_days?: number[]
           open_time?: string
@@ -127,6 +124,7 @@ export type Database = {
           category: string
           created_at: string
           currency: string
+          delivery_time: string | null
           description: string | null
           discount_pct: number
           id: string
@@ -145,6 +143,7 @@ export type Database = {
           category?: string
           created_at?: string
           currency?: string
+          delivery_time?: string | null
           description?: string | null
           discount_pct?: number
           id?: string
@@ -163,6 +162,7 @@ export type Database = {
           category?: string
           created_at?: string
           currency?: string
+          delivery_time?: string | null
           description?: string | null
           discount_pct?: number
           id?: string

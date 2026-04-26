@@ -14,6 +14,7 @@ const empty: Partial<Product> = {
   currency: "USD",
   stock: 0,
   por_encargo: false,
+  delivery_time: "",
   is_on_sale: false,
   discount_pct: 0,
   image_url: "",
@@ -41,7 +42,6 @@ export function ProductsTab({ filters }: { filters: ProductFilter[] }) {
 
   const upsert = useMutation({
     mutationFn: async (p: Partial<Product>) => {
-      // Build clean payload (omit fields like created_at)
       const payload = {
         name: p.name?.trim() ?? "",
         description: p.description ?? "",
@@ -50,6 +50,7 @@ export function ProductsTab({ filters }: { filters: ProductFilter[] }) {
         currency: p.currency ?? "USD",
         stock: Number(p.stock) || 0,
         por_encargo: !!p.por_encargo,
+        delivery_time: p.por_encargo ? (p.delivery_time?.trim() || null) : null,
         is_on_sale: !!p.is_on_sale,
         discount_pct: Math.max(0, Math.min(95, Number(p.discount_pct) || 0)),
         image_url: p.image_url ?? "",
@@ -309,6 +310,16 @@ function ProductEditModal({
               value={!!form.por_encargo}
               onChange={(v) => set("por_encargo", v)}
             />
+            {form.por_encargo && (
+              <Field label="Tiempo de entrega">
+                <input
+                  value={form.delivery_time ?? ""}
+                  onChange={(e) => set("delivery_time", e.target.value)}
+                  placeholder="ej: 7-15 días"
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface"
+                />
+              </Field>
+            )}
             <Toggle
               label="Marcar como nuevo"
               value={!!form.is_new}
@@ -377,7 +388,12 @@ function Toggle({
 }) {
   return (
     <label className="flex items-center justify-between gap-3 py-1.5">
-      <span className="text-sm">{label}</span>
+      <span className={`text-sm font-medium ${value ? "text-foreground" : "text-muted-foreground"}`}>
+        {label}
+        <span className={`ml-2 text-[10px] uppercase tracking-wide font-bold ${value ? "text-primary" : "text-muted-foreground/70"}`}>
+          {value ? "Activo" : "Inactivo"}
+        </span>
+      </span>
       <button
         type="button"
         role="switch"
