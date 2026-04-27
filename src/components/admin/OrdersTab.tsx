@@ -151,6 +151,35 @@ export function OrdersTab() {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="font-semibold uppercase tracking-wide">Período</span>
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as Period)}
+            className="text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-foreground"
+          >
+            {PERIODS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">{periodSummary.count}</span> pedido
+          {periodSummary.count === 1 ? "" : "s"}
+          {periodSummary.total > 0 && (
+            <span className="ml-2">
+              · Total vendido:{" "}
+              <span className="font-semibold text-foreground">
+                {formatCurrency(periodSummary.total, periodSummary.currency)}
+              </span>
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
         {STATUSES.map((s) => (
           <button
