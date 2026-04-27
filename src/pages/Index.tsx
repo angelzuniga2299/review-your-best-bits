@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
@@ -42,6 +42,20 @@ const Index = () => {
   const cartIconRef = useRef<HTMLButtonElement>(null);
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
+  const navigate = useNavigate();
+  // Hidden 3-click access to /auth via the footer copyright.
+  const secretClicksRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+  const handleSecretAccessClick = useCallback(() => {
+    const now = Date.now();
+    const { count, last } = secretClicksRef.current;
+    const within = now - last <= 1500;
+    const nextCount = within ? count + 1 : 1;
+    secretClicksRef.current = { count: nextCount, last: now };
+    if (nextCount >= 3) {
+      secretClicksRef.current = { count: 0, last: 0 };
+      navigate("/auth");
+    }
+  }, [navigate]);
 
   const storeStatus = useStoreStatus(
     settings
@@ -413,12 +427,12 @@ const Index = () => {
 
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p
+            className="text-sm text-muted-foreground select-none"
+            onClick={handleSecretAccessClick}
+          >
             © {new Date().getFullYear()} {settings?.business_name ?? "Insignia"}. Todos los derechos reservados.
           </p>
-          <Link to="/auth" className="text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline">
-            Acceso vendedor
-          </Link>
         </div>
       </footer>
 
