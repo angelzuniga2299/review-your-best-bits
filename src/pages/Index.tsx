@@ -142,6 +142,7 @@ const Index = () => {
   async function createOrder(opts: {
     items: OrderItem[];
     whatsappMessage: string;
+    notes?: string;
     onSuccess?: () => void;
     successToast: string;
   }) {
@@ -160,6 +161,7 @@ const Index = () => {
         total,
         currency,
         status: "pendiente",
+        notes: opts.notes ?? null,
       });
       if (error) throw error;
     } catch (err) {
@@ -436,6 +438,8 @@ const Index = () => {
         items={cart.items}
         total={cart.total}
         currency={cart.currency}
+        notes={cartNotes}
+        onNotesChange={setCartNotes}
         onClose={() => setCartOpen(false)}
         onRemove={cart.remove}
         onSetQty={cart.setQty}
