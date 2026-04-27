@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
@@ -413,12 +413,12 @@ const Index = () => {
 
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p
+            className="text-sm text-muted-foreground select-none"
+            onClick={handleSecretAccessClick}
+          >
             © {new Date().getFullYear()} {settings?.business_name ?? "Insignia"}. Todos los derechos reservados.
           </p>
-          <Link to="/auth" className="text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline">
-            Acceso vendedor
-          </Link>
         </div>
       </footer>
 
