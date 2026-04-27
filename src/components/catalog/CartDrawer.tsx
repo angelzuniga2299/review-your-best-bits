@@ -8,6 +8,8 @@ type Props = {
   items: CartItem[];
   total: number;
   currency: Currency;
+  notes: string;
+  onNotesChange: (value: string) => void;
   onClose: () => void;
   onRemove: (productId: string) => void;
   onSetQty: (productId: string, qty: number) => void;
@@ -15,7 +17,19 @@ type Props = {
   isProcessing?: boolean;
 };
 
-export function CartDrawer({ open, items, total, currency, onClose, onRemove, onSetQty, onCheckout, isProcessing = false }: Props) {
+export function CartDrawer({
+  open,
+  items,
+  total,
+  currency,
+  notes,
+  onNotesChange,
+  onClose,
+  onRemove,
+  onSetQty,
+  onCheckout,
+  isProcessing = false,
+}: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -105,11 +119,20 @@ export function CartDrawer({ open, items, total, currency, onClose, onRemove, on
           )}
         </div>
 
-        <footer className="p-6 border-t border-border bg-muted/40">
-          <div className="flex justify-between items-baseline mb-4">
+        <footer className="p-6 border-t border-border bg-muted/40 space-y-3">
+          <div className="flex justify-between items-baseline">
             <span className="text-muted-foreground text-sm">Total aproximado</span>
             <span className="text-lg font-semibold">{formatCurrency(total, currency)}</span>
           </div>
+          <textarea
+            value={notes}
+            onChange={(e) => onNotesChange(e.target.value)}
+            placeholder="Notas adicionales (opcional)"
+            rows={2}
+            disabled={items.length === 0}
+            aria-label="Notas adicionales para el pedido"
+            className="w-full text-sm rounded-xl border border-border bg-surface px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 resize-none"
+          />
           <button
             type="button"
             onClick={onCheckout}
