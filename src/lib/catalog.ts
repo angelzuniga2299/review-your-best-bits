@@ -95,6 +95,6 @@ export function formatCurrency(amount: number, currency: Currency = "USD"): stri
     minimumFractionDigits: value % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   });
-  // Always prefix with currency code so the unit is unambiguous in any view.
-  return `${currency} ${formatted}`;
+  // Always prefix with currency code + $ symbol so the unit is unambiguous in any view.
+  return `${currency} $${formatted}`;
 }
