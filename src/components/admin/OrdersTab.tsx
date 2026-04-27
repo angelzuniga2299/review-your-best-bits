@@ -19,6 +19,40 @@ const STATUSES: { id: OrderStatus | "all"; label: string }[] = [
   { id: "cancelado", label: "Cancelado" },
 ];
 
+type Period = "today" | "week" | "month" | "year" | "all";
+
+const PERIODS: { id: Period; label: string }[] = [
+  { id: "today", label: "Hoy" },
+  { id: "week", label: "Esta semana" },
+  { id: "month", label: "Este mes" },
+  { id: "year", label: "Este año" },
+  { id: "all", label: "Todos" },
+];
+
+// Returns the inclusive lower-bound Date for the given period, or null for "all".
+function periodStart(period: Period): Date | null {
+  const now = new Date();
+  if (period === "all") return null;
+  if (period === "today") {
+    const d = new Date(now);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  if (period === "week") {
+    // Week starts Monday (es-CU convention).
+    const d = new Date(now);
+    d.setHours(0, 0, 0, 0);
+    const dow = (d.getDay() + 6) % 7; // 0 = Monday
+    d.setDate(d.getDate() - dow);
+    return d;
+  }
+  if (period === "month") {
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+  // year
+  return new Date(now.getFullYear(), 0, 1);
+}
+
 const BADGE: Record<OrderStatus, string> = {
   pendiente: "bg-warning/15 text-warning",
   contactado: "bg-info/15 text-info",
@@ -29,6 +63,7 @@ const BADGE: Record<OrderStatus, string> = {
 export function OrdersTab() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [period, setPeriod] = useState<Period>("month");
   const [selected, setSelected] = useState<Order | null>(null);
 
   const { data: orders, isLoading } = useQuery({
@@ -60,7 +95,25 @@ export function OrdersTab() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const list = (orders ?? []).filter((o) => filter === "all" || o.status === filter);
+  const startDate = periodStart(period);
+  const list = (orders ?? []).filter((o) => {
+    if (filter !== "all" && o.status !== filter) return false;
+    if (startDate && new Date(o.created_at) < startDate) return false;
+    return true;
+  });
+
+  // Quick summary for the active period (independent of status filter selection):
+  // counts every order in the period and sums confirmed sales total.
+  const periodSummary = (() => {
+    const all = orders ?? [];
+    const inPeriod = startDate ? all.filter((o) => new Date(o.created_at) >= startDate) : all;
+    const total = inPeriod.reduce(
+      (s, o) => (o.status === "vendido" ? s + (Number(o.total) || 0) : s),
+      0
+    );
+    const currency = inPeriod.find((o) => o.status === "vendido")?.currency ?? "USD";
+    return { count: inPeriod.length, total, currency };
+  })();
 
   // Group orders by day label (Hoy, Ayer, fecha) preserving sort order.
   const groups = (() => {
@@ -98,6 +151,35 @@ export function OrdersTab() {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="font-semibold uppercase tracking-wide">Período</span>
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as Period)}
+            className="text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-foreground"
+          >
+            {PERIODS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">{periodSummary.count}</span> pedido
+          {periodSummary.count === 1 ? "" : "s"}
+          {periodSummary.total > 0 && (
+            <span className="ml-2">
+              · Total vendido:{" "}
+              <span className="font-semibold text-foreground">
+                {formatCurrency(periodSummary.total, periodSummary.currency)}
+              </span>
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
         {STATUSES.map((s) => (
           <button
