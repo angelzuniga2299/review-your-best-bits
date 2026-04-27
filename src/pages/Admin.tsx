@@ -13,7 +13,7 @@ type Tab = "products" | "orders" | "stats" | "users" | "settings";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "products", label: "Productos", icon: <Package className="w-4 h-4" /> },
-  { id: "orders", label: "Ventas", icon: <ShoppingBag className="w-4 h-4" /> },
+  { id: "orders", label: "Órdenes", icon: <ShoppingBag className="w-4 h-4" /> },
   { id: "stats", label: "Stats", icon: <BarChart3 className="w-4 h-4" /> },
   { id: "users", label: "Usuarios", icon: <Users className="w-4 h-4" /> },
   { id: "settings", label: "Ajustes", icon: <SettingsIcon className="w-4 h-4" /> },
