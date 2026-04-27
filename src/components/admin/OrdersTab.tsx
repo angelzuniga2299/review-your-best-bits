@@ -15,7 +15,6 @@ import {
 const STATUSES: { id: OrderStatus | "all"; label: string }[] = [
   { id: "all", label: "Todos" },
   { id: "pendiente", label: "Pendiente" },
-  { id: "contactado", label: "Contactado" },
   { id: "vendido", label: "Vendido" },
   { id: "cancelado", label: "Cancelado" },
 ];
