@@ -38,6 +38,7 @@ const Index = () => {
   const [infoOpen, setInfoOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [cartNotes, setCartNotes] = useState("");
   const cartIconRef = useRef<HTMLButtonElement>(null);
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
@@ -212,6 +213,40 @@ const Index = () => {
     });
   }
 
+  /**
+   * Build the WhatsApp message for a multi-item checkout.
+   * Centralized so there's one source of truth for the format.
+   * - If the store is closed, use a short informative message.
+   * - If open, include business name, items, total and optional notes.
+   */
+  function buildCheckoutMessage(opts: {
+    items: OrderItem[];
+    total: number;
+    currency: Product["currency"];
+    notes: string;
+  }): string {
+    const businessName = settings?.business_name ?? "Insignia";
+
+    if (!storeStatus.isOpen) {
+      return `Hola ${businessName}, quiero hacer un pedido. La tienda está cerrada en este momento (${storeStatus.label}). ¿Pueden contactarme cuando abran? Gracias.`;
+    }
+
+    const lines = opts.items
+      .map(
+        (it) =>
+          `• ${it.name} ×${it.qty} — ${formatCurrency(it.price * it.qty, it.currency)}`
+      )
+      .join("\n");
+
+    const trimmedNotes = opts.notes.trim();
+    const notesBlock = trimmedNotes ? `\n\n*Notas:* ${trimmedNotes}` : "";
+
+    return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
+      opts.total,
+      opts.currency
+    )}${notesBlock}`;
+  }
+
   function checkout() {
     if (processingLockRef.current) return;
     if (cart.items.length === 0) return;
@@ -222,22 +257,21 @@ const Index = () => {
       qty: it.qty,
       currency: it.currency,
     }));
-    const lines = cart.items
-      .map(
-        (it) =>
-          `• ${it.name} ×${it.qty} — ${formatCurrency(it.price * it.qty, it.currency)}`
-      )
-      .join("\n");
-    const msg = `Hola, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
-      cart.total,
-      cart.currency
-    )}`;
+    const trimmedNotes = cartNotes.trim();
+    const msg = buildCheckoutMessage({
+      items,
+      total: cart.total,
+      currency: cart.currency,
+      notes: trimmedNotes,
+    });
     void createOrder({
       items,
       whatsappMessage: msg,
+      notes: trimmedNotes || undefined,
       successToast: "Pedido registrado y enviado por WhatsApp",
       onSuccess: () => {
         cart.clear();
+        setCartNotes("");
         setCartOpen(false);
       },
     });
