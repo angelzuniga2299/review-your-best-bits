@@ -32,7 +32,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
           onOpen(p);
         }
       }}
-      aria-label={`Ver detalle de ${p.name}`}
+      aria-label={`${p.name}, ${formatCurrency(sale, p.currency)}${p.warranty ? `, Garantía: ${p.warranty}` : ""}`}
     >
       <div className="relative h-[260px] bg-muted overflow-hidden">
         {p.image_url ? (
