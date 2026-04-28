@@ -11,6 +11,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<"signin" | "reset">("signin");
+  const [resetEmail, setResetEmail] = useState("");
 
   useEffect(() => {
     if (!loading && session) {
@@ -26,6 +28,23 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("Sesión iniciada");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error inesperado";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: window.location.origin + "/auth",
+      });
+      if (error) throw error;
+      toast.success("Revisa tu correo para restablecer la contraseña.");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Error inesperado";
       toast.error(message);
