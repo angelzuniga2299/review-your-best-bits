@@ -45,6 +45,7 @@ export type CartItem = {
   qty: number;
   image_url: string | null;
   por_encargo: boolean;
+  stock?: number;
 };
 
 export type OrderStatus = "pendiente" | "contactado" | "vendido" | "cancelado";
