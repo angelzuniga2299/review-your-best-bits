@@ -8,7 +8,6 @@ import { ArrowLeft } from "lucide-react";
 const Auth = () => {
   const navigate = useNavigate();
   const { session, loading, isAdmin } = useAuth();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -24,22 +23,9 @@ const Auth = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      if (mode === "signup") {
-        const redirectUrl = `${window.location.origin}/admin`;
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: redirectUrl },
-        });
-        if (error) throw error;
-        // Auto-claim admin if first user
-        await supabase.rpc("claim_first_admin");
-        toast.success("Cuenta creada. Bienvenido.");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Sesión iniciada");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      toast.success("Sesión iniciada");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Error inesperado";
       toast.error(message);
@@ -66,31 +52,6 @@ const Auth = () => {
             <p className="text-sm text-muted-foreground">Acceso vendedor</p>
           </div>
 
-          <div className="flex bg-muted rounded-xl p-1 mb-6">
-            <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${
-                mode === "signin"
-                  ? "bg-surface text-foreground shadow-sm"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Iniciar sesión
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("signup")}
-              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${
-                mode === "signup"
-                  ? "bg-surface text-foreground shadow-sm"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Crear cuenta
-            </button>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label htmlFor="email" className="block text-xs uppercase tracking-wide text-muted-foreground mb-1.5">
@@ -115,7 +76,7 @@ const Auth = () => {
                 type="password"
                 required
                 minLength={6}
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border border-border bg-surface rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -126,15 +87,9 @@ const Auth = () => {
               disabled={submitting}
               className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors disabled:opacity-50"
             >
-              {submitting ? "Procesando…" : mode === "signin" ? "Entrar" : "Crear cuenta"}
+              {submitting ? "Procesando…" : "Entrar"}
             </button>
           </form>
-
-          {mode === "signup" && (
-            <p className="text-xs text-muted-foreground mt-4 text-center">
-              El primer usuario en registrarse se convierte automáticamente en admin.
-            </p>
-          )}
         </div>
       </main>
     </div>
