@@ -60,6 +60,7 @@ export function useCart() {
           qty: Math.min(qty, cap),
           image_url: p.image_url,
           por_encargo: p.por_encargo,
+          stock: p.stock,
         },
       ];
     });
@@ -71,11 +72,15 @@ export function useCart() {
   }, []);
 
   const setQty = useCallback((productId: string, qty: number) => {
-    setItems((prev) =>
-      qty <= 0
-        ? prev.filter((x) => x.productId !== productId)
-        : prev.map((x) => (x.productId === productId ? { ...x, qty } : x))
-    );
+    setItems((prev) => {
+      const item = prev.find((x) => x.productId === productId);
+      if (!item) return prev;
+      const cap = item.por_encargo ? Infinity : (item.stock ?? Infinity);
+      const nextQty = Math.min(qty, cap);
+      if (nextQty <= 0) return prev.filter((x) => x.productId !== productId);
+      if (nextQty === item.qty) return prev;
+      return prev.map((x) => (x.productId === productId ? { ...x, qty: nextQty } : x));
+    });
   }, []);
 
   const clear = useCallback(() => setItems([]), []);
