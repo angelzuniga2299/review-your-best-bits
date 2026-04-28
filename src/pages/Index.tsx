@@ -205,7 +205,12 @@ const Index = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
     ]);
 
-    window.open(whatsAppLink(opts.whatsappMessage), "_blank", "noopener");
+    const link = whatsAppLink(opts.whatsappMessage);
+    if (link) {
+      window.open(link, "_blank", "noopener");
+    } else {
+      toast.error("Número de contacto no configurado. Contacta al administrador.");
+    }
     opts.onSuccess?.();
     toast.success(opts.successToast);
     setConfirmation("Pedido enviado correctamente");
