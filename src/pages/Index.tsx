@@ -131,7 +131,8 @@ const Index = () => {
 
   const whatsAppLink = useCallback(
     (text: string) => {
-      const num = settings?.whatsapp_number ?? "5352996275";
+      const num = settings?.whatsapp_number?.trim();
+      if (!num) return null;
       return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
     },
     [settings?.whatsapp_number]
