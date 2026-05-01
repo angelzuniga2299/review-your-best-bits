@@ -23,6 +23,8 @@ const empty: Partial<Product> = {
   sort_order: 0,
 };
 
+const BUCKET = "product-images";
+
 export function ProductsTab({ filters }: { filters: ProductFilter[] }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
