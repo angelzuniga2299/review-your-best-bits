@@ -243,17 +243,14 @@ const Index = () => {
     const trimmedNotes = opts.notes.trim();
     const notesBlock = trimmedNotes ? `\n\n*Notas:* ${trimmedNotes}` : "";
 
-    if (!storeStatus.isOpen) {
-      return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
-        opts.total,
-        opts.currency
-      )}${notesBlock}\n\n_La tienda está cerrada en este momento (${storeStatus.label}). Mi pedido se atenderá cuando abran. Gracias._`;
-    }
+    const closedBlock = !storeStatus.isOpen
+      ? `\n\n⏰ Pedido recibido. Te atenderemos cuando la tienda abra: ${storeStatus.nextChangeLabel}`
+      : "";
 
     return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
       opts.total,
       opts.currency
-    )}${notesBlock}\n\n_Estado de la tienda: ${storeStatus.label}._`;
+    )}${notesBlock}${closedBlock}`;
   }
 
   function orderSingleByWhatsApp(p: Product) {
