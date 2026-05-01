@@ -287,7 +287,7 @@ const Index = () => {
       currency: it.currency,
     }));
     const trimmedNotes = cartNotes.trim();
-    const msg = buildCheckoutMessage({
+    const msg = buildWhatsAppMessage({
       items,
       total: cart.total,
       currency: cart.currency,
