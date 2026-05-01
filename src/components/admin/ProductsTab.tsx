@@ -224,13 +224,35 @@ function ProductEditModal({
 
         <form
           className="p-5 space-y-3"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (!form.name?.trim()) {
               toast.error("El nombre es obligatorio");
               return;
             }
-            onSave(form);
+            let finalForm = form;
+            if (pendingFile) {
+              setUploading(true);
+              try {
+                const fileName = `${Date.now()}-${pendingFile.name}`;
+                const { error: upErr } = await supabase.storage
+                  .from(BUCKET)
+                  .upload(fileName, pendingFile, { upsert: true });
+                if (upErr) throw upErr;
+                const { data: pub } = supabase.storage
+                  .from(BUCKET)
+                  .getPublicUrl(fileName);
+                finalForm = { ...form, image_url: pub.publicUrl };
+                setForm(finalForm);
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : "Error al subir";
+                toast.error(`No se pudo subir la imagen: ${msg}`);
+                setUploading(false);
+                return;
+              }
+              setUploading(false);
+            }
+            onSave(finalForm);
           }}
         >
           <Field label="Nombre">
