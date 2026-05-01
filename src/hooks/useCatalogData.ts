@@ -43,7 +43,7 @@ export function useSettings() {
       if (error) throw error;
       if (!data) {
         return {
-          whatsapp_number: "5352996275",
+          whatsapp_number: "",
           business_name: "Insignia",
           business_info: "Catálogo de electrodomésticos",
           business_address: "La Habana, Cuba",
