@@ -218,40 +218,20 @@ const Index = () => {
     setIsProcessing(false);
   }
 
-  function orderSingleByWhatsApp(p: Product) {
-    if (processingLockRef.current) return;
-    const price = getSalePrice(p);
-    const items: OrderItem[] = [
-      { productId: p.id, name: p.name, price, qty: 1, currency: p.currency },
-    ];
-    const msg = `Hola, me interesa este producto:\n\n*${p.name}*\nPrecio: ${formatCurrency(price, p.currency)}${
-      p.por_encargo ? "\n(Por encargo)" : ""
-    }\n\n¿Está disponible?`;
-    void createOrder({
-      items,
-      whatsappMessage: msg,
-      successToast: "Pedido registrado correctamente",
-      onSuccess: () => setDetail(null),
-    });
-  }
-
   /**
-   * Build the WhatsApp message for a multi-item checkout.
+   * Build the WhatsApp message for an order (single item or full cart).
    * Centralized so there's one source of truth for the format.
-   * - If the store is closed, use a short informative message.
+   * - If the store is closed, use a short informative message indicating
+   *   the order will be attended when it opens.
    * - If open, include business name, items, total and optional notes.
    */
-  function buildCheckoutMessage(opts: {
+  function buildWhatsAppMessage(opts: {
     items: OrderItem[];
     total: number;
     currency: Product["currency"];
     notes: string;
   }): string {
     const businessName = settings?.business_name ?? "Insignia";
-
-    if (!storeStatus.isOpen) {
-      return `Hola ${businessName}, quiero hacer un pedido. La tienda está cerrada en este momento (${storeStatus.label}). ¿Pueden contactarme cuando abran? Gracias.`;
-    }
 
     const lines = opts.items
       .map(
@@ -263,10 +243,37 @@ const Index = () => {
     const trimmedNotes = opts.notes.trim();
     const notesBlock = trimmedNotes ? `\n\n*Notas:* ${trimmedNotes}` : "";
 
+    if (!storeStatus.isOpen) {
+      return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
+        opts.total,
+        opts.currency
+      )}${notesBlock}\n\n_La tienda está cerrada en este momento (${storeStatus.label}). Mi pedido se atenderá cuando abran. Gracias._`;
+    }
+
     return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
       opts.total,
       opts.currency
-    )}${notesBlock}`;
+    )}${notesBlock}\n\n_Estado de la tienda: ${storeStatus.label}._`;
+  }
+
+  function orderSingleByWhatsApp(p: Product) {
+    if (processingLockRef.current) return;
+    const price = getSalePrice(p);
+    const items: OrderItem[] = [
+      { productId: p.id, name: p.name, price, qty: 1, currency: p.currency },
+    ];
+    const msg = buildWhatsAppMessage({
+      items,
+      total: price,
+      currency: p.currency,
+      notes: "",
+    });
+    void createOrder({
+      items,
+      whatsappMessage: msg,
+      successToast: "Pedido registrado correctamente",
+      onSuccess: () => setDetail(null),
+    });
   }
 
   function checkout() {
