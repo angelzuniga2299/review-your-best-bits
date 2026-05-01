@@ -299,14 +299,26 @@ function ProductEditModal({
             </Field>
           </div>
 
-          <Field label="Imagen (URL)">
-            <input
-              type="url"
-              value={form.image_url ?? ""}
-              onChange={(e) => set("image_url", e.target.value)}
-              placeholder="https://…"
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface"
-            />
+          <Field label="Imagen">
+            <div className="space-y-2">
+              {(previewUrl || form.image_url) && (
+                <img
+                  src={previewUrl || form.image_url}
+                  alt="Vista previa"
+                  className="w-20 h-20 object-cover rounded-lg border border-border"
+                />
+              )}
+              <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-surface text-sm font-medium cursor-pointer hover:bg-muted transition-colors">
+                {uploading ? "Subiendo…" : "Seleccionar imagen"}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleFileChange}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </Field>
 
           <Field label="Garantía">
