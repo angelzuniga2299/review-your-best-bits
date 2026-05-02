@@ -436,28 +436,18 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 py-1.5">
-      <span className={`text-sm font-medium ${value ? "text-foreground" : "text-muted-foreground"}`}>
-        {label}
-        <span className={`ml-2 text-[10px] uppercase tracking-wide font-bold ${value ? "text-primary" : "text-muted-foreground/70"}`}>
-          {value ? "Activo" : "Inactivo"}
-        </span>
-      </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={value}
-        onClick={() => onChange(!value)}
-        className={`relative w-10 h-6 rounded-full transition-colors ${
-          value ? "bg-primary" : "bg-muted"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-            value ? "translate-x-[18px]" : "translate-x-0.5"
-          }`}
-        />
-      </button>
-    </label>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={value}
+      onClick={() => onChange(!value)}
+      className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+        value
+          ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
+          : "bg-transparent text-muted-foreground border-border hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
