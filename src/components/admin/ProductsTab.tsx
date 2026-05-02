@@ -351,12 +351,24 @@ function ProductEditModal({
             />
           </Field>
 
-          <div className="space-y-2 pt-2">
-            <Toggle
-              label="Por encargo"
-              value={!!form.por_encargo}
-              onChange={(v) => set("por_encargo", v)}
-            />
+          <div className="pt-2 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <Toggle
+                label="Marcar Por Encargo"
+                value={!!form.por_encargo}
+                onChange={(v) => set("por_encargo", v)}
+              />
+              <Toggle
+                label="Marcar como Nuevo"
+                value={!!form.is_new}
+                onChange={(v) => set("is_new", v)}
+              />
+              <Toggle
+                label="En Oferta"
+                value={!!form.is_on_sale}
+                onChange={(v) => set("is_on_sale", v)}
+              />
+            </div>
             {form.por_encargo && (
               <Field label="Tiempo de entrega">
                 <input
@@ -367,16 +379,6 @@ function ProductEditModal({
                 />
               </Field>
             )}
-            <Toggle
-              label="Marcar como nuevo"
-              value={!!form.is_new}
-              onChange={(v) => set("is_new", v)}
-            />
-            <Toggle
-              label="En oferta"
-              value={!!form.is_on_sale}
-              onChange={(v) => set("is_on_sale", v)}
-            />
             {form.is_on_sale && (
               <Field label="Descuento %">
                 <input
@@ -434,28 +436,18 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 py-1.5">
-      <span className={`text-sm font-medium ${value ? "text-foreground" : "text-muted-foreground"}`}>
-        {label}
-        <span className={`ml-2 text-[10px] uppercase tracking-wide font-bold ${value ? "text-primary" : "text-muted-foreground/70"}`}>
-          {value ? "Activo" : "Inactivo"}
-        </span>
-      </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={value}
-        onClick={() => onChange(!value)}
-        className={`relative w-10 h-6 rounded-full transition-colors ${
-          value ? "bg-primary" : "bg-muted"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-            value ? "translate-x-[18px]" : "translate-x-0.5"
-          }`}
-        />
-      </button>
-    </label>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={value}
+      onClick={() => onChange(!value)}
+      className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+        value
+          ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
+          : "bg-transparent text-muted-foreground border-border hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
