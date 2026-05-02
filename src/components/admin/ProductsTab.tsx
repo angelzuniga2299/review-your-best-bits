@@ -351,12 +351,24 @@ function ProductEditModal({
             />
           </Field>
 
-          <div className="space-y-2 pt-2">
-            <Toggle
-              label="Por encargo"
-              value={!!form.por_encargo}
-              onChange={(v) => set("por_encargo", v)}
-            />
+          <div className="pt-2 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <Toggle
+                label="Marcar Por Encargo"
+                value={!!form.por_encargo}
+                onChange={(v) => set("por_encargo", v)}
+              />
+              <Toggle
+                label="Marcar como Nuevo"
+                value={!!form.is_new}
+                onChange={(v) => set("is_new", v)}
+              />
+              <Toggle
+                label="En Oferta"
+                value={!!form.is_on_sale}
+                onChange={(v) => set("is_on_sale", v)}
+              />
+            </div>
             {form.por_encargo && (
               <Field label="Tiempo de entrega">
                 <input
@@ -367,16 +379,6 @@ function ProductEditModal({
                 />
               </Field>
             )}
-            <Toggle
-              label="Marcar como nuevo"
-              value={!!form.is_new}
-              onChange={(v) => set("is_new", v)}
-            />
-            <Toggle
-              label="En oferta"
-              value={!!form.is_on_sale}
-              onChange={(v) => set("is_on_sale", v)}
-            />
             {form.is_on_sale && (
               <Field label="Descuento %">
                 <input
