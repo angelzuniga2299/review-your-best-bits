@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, ShoppingBag, BarChart3, Settings as SettingsIcon, Users, LogOut, ArrowLeft } from "lucide-react";
+import { Package, ShoppingBag, BarChart3, Settings as SettingsIcon, Users, LogOut, ArrowLeft, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useFilters } from "@/hooks/useCatalogData";
 import { ProductsTab } from "@/components/admin/ProductsTab";
@@ -8,12 +8,14 @@ import { OrdersTab } from "@/components/admin/OrdersTab";
 import { StatsTab } from "@/components/admin/StatsTab";
 import { SettingsTab } from "@/components/admin/SettingsTab";
 import { UsersTab } from "@/components/admin/UsersTab";
+import { CategoriesTab } from "@/components/admin/CategoriesTab";
 
-type Tab = "products" | "orders" | "stats" | "users" | "settings";
+type Tab = "products" | "orders" | "categories" | "stats" | "users" | "settings";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "products", label: "Productos", icon: <Package className="w-4 h-4" /> },
   { id: "orders", label: "Órdenes", icon: <ShoppingBag className="w-4 h-4" /> },
+  { id: "categories", label: "Categorías", icon: <Tag className="w-4 h-4" /> },
   { id: "stats", label: "Stats", icon: <BarChart3 className="w-4 h-4" /> },
   { id: "users", label: "Usuarios", icon: <Users className="w-4 h-4" /> },
   { id: "settings", label: "Ajustes", icon: <SettingsIcon className="w-4 h-4" /> },
@@ -71,6 +73,7 @@ const Admin = () => {
       <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
         {tab === "products" && <ProductsTab filters={filters ?? []} />}
         {tab === "orders" && <OrdersTab />}
+        {tab === "categories" && <CategoriesTab />}
         {tab === "stats" && <StatsTab />}
         {tab === "users" && <UsersTab />}
         {tab === "settings" && <SettingsTab />}
