@@ -73,6 +73,7 @@ const Admin = () => {
       <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
         {tab === "products" && <ProductsTab filters={filters ?? []} />}
         {tab === "orders" && <OrdersTab />}
+        {tab === "categories" && <CategoriesTab />}
         {tab === "stats" && <StatsTab />}
         {tab === "users" && <UsersTab />}
         {tab === "settings" && <SettingsTab />}
