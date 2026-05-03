@@ -1,7 +1,7 @@
 export function ProductCardSkeleton() {
   return (
     <div className="product-card h-full animate-pulse">
-      <div className="h-[260px] bg-muted" />
+      <div className="aspect-square w-full bg-muted" />
       <div className="p-5 space-y-3">
         <div className="h-5 bg-muted rounded w-3/4" />
         <div className="h-6 bg-muted rounded w-1/3" />

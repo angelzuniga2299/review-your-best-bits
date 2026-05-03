@@ -34,16 +34,16 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
       }}
       aria-label={`${p.name}, ${formatCurrency(sale, p.currency)}${p.warranty ? `, Garantía: ${p.warranty}` : ""}`}
     >
-      <div className="relative h-[260px] bg-muted overflow-hidden">
+      <div className="relative aspect-square w-full bg-muted overflow-hidden">
         {p.image_url ? (
           <img
             src={p.image_url}
             alt={p.name}
             loading="lazy"
             width={400}
-            height={260}
+            height={400}
             className={cn(
-              "w-full h-full object-cover transition-[filter,opacity]",
+              "absolute inset-0 w-full h-full object-cover transition-[filter,opacity]",
               out && "grayscale opacity-70"
             )}
           />
