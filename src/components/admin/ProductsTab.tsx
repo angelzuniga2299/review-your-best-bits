@@ -344,11 +344,20 @@ function ProductEditModal({
           </Field>
 
           <Field label="Garantía">
-            <input
+            <select
               value={form.warranty ?? ""}
               onChange={(e) => set("warranty", e.target.value)}
               className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface"
-            />
+            >
+              <option value="">Sin garantía</option>
+              <option value="7 days">7 days</option>
+              <option value="14 days">14 days</option>
+              <option value="30 days">30 days</option>
+              <option value="60 days">60 days</option>
+              <option value="90 days">90 days</option>
+              <option value="1 year">1 year</option>
+              <option value="Lifetime">Lifetime</option>
+            </select>
           </Field>
 
           <div className="pt-2 space-y-3">
