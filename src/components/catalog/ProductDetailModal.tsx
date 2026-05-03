@@ -53,7 +53,7 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
           <X className="w-5 h-5" />
         </button>
 
-        <div className="shrink-0 relative aspect-square w-full bg-muted overflow-hidden">
+        <div className="shrink-0 relative aspect-square w-full mx-auto max-h-[220px] sm:max-h-[280px] bg-muted overflow-hidden" style={{ maxWidth: "min(100%, 280px)" }}>
           {p.image_url ? (
             <img src={p.image_url} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
