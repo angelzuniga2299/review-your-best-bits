@@ -53,11 +53,11 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
           <X className="w-5 h-5" />
         </button>
 
-        <div className="shrink-0 relative bg-muted">
+        <div className="shrink-0 relative aspect-square w-full bg-muted overflow-hidden">
           {p.image_url ? (
-            <img src={p.image_url} alt={p.name} className="w-full h-[min(38vh,260px)] sm:h-64 object-cover" />
+            <img src={p.image_url} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-[min(38vh,260px)] sm:h-64 flex items-center justify-center text-muted-foreground">
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
               Sin imagen
             </div>
           )}
