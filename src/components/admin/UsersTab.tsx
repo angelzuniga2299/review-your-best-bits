@@ -87,7 +87,7 @@ export function UsersTab() {
                     onClick={() => {
                       if (confirm(`¿Quitar admin a ${u.email}?`)) revoke.mutate(u.user_id);
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive hover:bg-destructive/10 disabled:opacity-40 disabled:pointer-events-none"
+                    className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-full text-sm font-medium border transition-colors bg-primary text-primary-foreground border-primary hover:bg-primary-hover disabled:opacity-40 disabled:pointer-events-none"
                   >
                     <ShieldOff className="w-3.5 h-3.5" /> Quitar admin
                   </button>
@@ -96,7 +96,7 @@ export function UsersTab() {
                     type="button"
                     disabled={promote.isPending}
                     onClick={() => promote.mutate(u.user_id)}
-                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 font-semibold"
+                    className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-full text-sm font-medium border transition-colors bg-transparent text-muted-foreground border-border hover:bg-muted hover:text-foreground disabled:opacity-40 disabled:pointer-events-none"
                   >
                     <ShieldCheck className="w-3.5 h-3.5" /> Hacer admin
                   </button>

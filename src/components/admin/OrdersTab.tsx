@@ -239,7 +239,7 @@ export function OrdersTab() {
                   </p>
                 </div>
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md ${BADGE[o.status]}`}
+                  className={`inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-md leading-none ${BADGE[o.status]}`}
                 >
                   {o.status}
                 </span>
@@ -301,7 +301,7 @@ export function OrdersTab() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">Estado</span>
                   <span
-                    className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md ${BADGE[selected.status]}`}
+                    className={`inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-md leading-none ${BADGE[selected.status]}`}
                   >
                     {selected.status}
                   </span>
