@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, Plus, Loader2 } from "lucide-react";
+import { Trash2, Plus, Loader2, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { ProductFilter } from "@/lib/catalog";
@@ -78,6 +78,34 @@ export function CategoriesTab() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async ({ index, direction }: { index: number; direction: -1 | 1 }) => {
+      const target = index + direction;
+      if (target < 0 || target >= filters.length) return;
+      const a = filters[index];
+      const b = filters[target];
+      const sortA = a.sort_order ?? 0;
+      const sortB = b.sort_order ?? 0;
+      const newA = sortB;
+      const newB = sortA === sortB ? sortA + (direction === 1 ? 1 : -1) : sortA;
+
+      const { error: e1 } = await supabase
+        .from("product_filters")
+        .update({ sort_order: newA })
+        .eq("id", a.id);
+      if (e1) throw e1;
+      const { error: e2 } = await supabase
+        .from("product_filters")
+        .update({ sort_order: newB })
+        .eq("id", b.id);
+      if (e2) throw e2;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["product_filters"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     addMutation.mutate(label);
@@ -132,26 +160,46 @@ export function CategoriesTab() {
         ) : filters.length === 0 ? (
           <div className="p-4 text-sm text-muted-foreground">No hay categorías aún.</div>
         ) : (
-          filters.map((f) => {
+          filters.map((f, idx) => {
             const isReserved = RESERVED_FILTERS.has(f.id);
             return (
               <div key={f.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium truncate">{f.label}</div>
                   <div className="text-xs text-muted-foreground truncate">
                     id: {f.id}
                     {isReserved && " · sistema"}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(f)}
-                  disabled={isReserved || deleteMutation.isPending}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-destructive hover:bg-destructive/10 disabled:opacity-30 disabled:hover:bg-transparent"
-                  aria-label={`Eliminar ${f.label}`}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => reorderMutation.mutate({ index: idx, direction: -1 })}
+                    disabled={idx === 0 || reorderMutation.isPending}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent"
+                    aria-label={`Subir ${f.label}`}
+                  >
+                    <ArrowUp className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => reorderMutation.mutate({ index: idx, direction: 1 })}
+                    disabled={idx === filters.length - 1 || reorderMutation.isPending}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent"
+                    aria-label={`Bajar ${f.label}`}
+                  >
+                    <ArrowDown className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(f)}
+                    disabled={isReserved || deleteMutation.isPending}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-destructive hover:bg-destructive/10 disabled:opacity-30 disabled:hover:bg-transparent"
+                    aria-label={`Eliminar ${f.label}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             );
           })
