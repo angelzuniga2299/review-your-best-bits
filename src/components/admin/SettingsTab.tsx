@@ -158,3 +158,29 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
+function DayToggle({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={value}
+      onClick={() => onChange(!value)}
+      className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+        value
+          ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
+          : "bg-transparent text-muted-foreground border-border hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
