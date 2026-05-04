@@ -41,6 +41,7 @@ export function SettingsTab() {
           business_address: form.business_address,
           open_time: form.open_time,
           close_time: form.close_time,
+          open_days: form.open_days,
         })
         .eq("id", true);
       if (error) throw error;
