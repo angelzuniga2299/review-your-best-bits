@@ -112,6 +112,28 @@ export function SettingsTab() {
         </Field>
       </div>
 
+      <Field label="Días de apertura">
+        <div className="flex flex-wrap gap-2">
+          {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((label, i) => {
+            const active = (form.open_days ?? []).includes(i);
+            return (
+              <DayToggle
+                key={i}
+                label={label}
+                value={active}
+                onChange={(v) => {
+                  const current = form.open_days ?? [];
+                  const next = v
+                    ? [...current, i].sort((a, b) => a - b)
+                    : current.filter((d) => d !== i);
+                  set("open_days", next);
+                }}
+              />
+            );
+          })}
+        </div>
+      </Field>
+
       {/* Comisiones eliminadas del panel vendedor */}
 
       <button
