@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
@@ -27,6 +27,23 @@ const Index = () => {
   const { data: products, isLoading: loadingProducts } = useProducts();
   const { data: filters } = useFilters();
   const { data: settings } = useSettings();
+
+  useEffect(() => {
+    if (!settings) return;
+    const name = settings.business_name?.trim();
+    const info = settings.business_info?.trim();
+    if (name) document.title = name;
+    if (info) {
+      let meta = document.querySelector('meta[name="description"]');
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", "description");
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", info);
+    }
+  }, [settings]);
+
   const { isAdmin } = useAuth();
   const cart = useCart();
   const queryClient = useQueryClient();
