@@ -124,6 +124,11 @@ export function CartDrawer({
             <span className="text-muted-foreground text-sm">Total aproximado</span>
             <span className="text-lg font-semibold">{formatCurrency(total, currency)}</span>
           </div>
+          {items.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Los precios se confirman al finalizar el pedido.
+            </p>
+          )}
           <textarea
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
