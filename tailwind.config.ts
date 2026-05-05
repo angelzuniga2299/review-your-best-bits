@@ -11,6 +11,7 @@ export default {
       screens: { "2xl": "1280px" },
     },
     extend: {
+      screens: { xs: "480px" },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         brand: ['"Nova Round"', 'system-ui', 'sans-serif'],
