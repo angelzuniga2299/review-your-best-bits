@@ -15,6 +15,7 @@ import {
   isOutOfStock,
   type Product,
 } from "@/lib/catalog";
+import { trackEvent } from "@/lib/analytics";
 
 import { FilterBar } from "@/components/catalog/FilterBar";
 import { ProductCard } from "@/components/catalog/ProductCard";
@@ -135,6 +136,7 @@ const Index = () => {
       const ok = cartAdd(p, 1);
       if (!ok) return;
       if (sourceEl) flyToCart(sourceEl);
+      trackEvent("add_to_cart", { productId: p.id, name: p.name, price: getSalePrice(p) });
       toast.success(`${p.name} añadido al carrito`);
     },
     [cartAdd, flyToCart]
@@ -272,6 +274,7 @@ const Index = () => {
 
   function orderSingleByWhatsApp(p: Product) {
     if (processingLockRef.current) return;
+    trackEvent("order_whatsapp_single", { productId: p.id });
     const price = getSalePrice(p);
     const items: OrderItem[] = [
       { productId: p.id, name: p.name, price, qty: 1, currency: p.currency },
@@ -293,6 +296,7 @@ const Index = () => {
   function checkout() {
     if (processingLockRef.current) return;
     if (cart.items.length === 0) return;
+    trackEvent("order_whatsapp_cart", { items: cart.items.length, total: cart.total });
     const items: OrderItem[] = cart.items.map((it) => ({
       productId: it.productId,
       name: it.name,
@@ -444,7 +448,10 @@ const Index = () => {
               <ProductCard
                 key={p.id}
                 product={p}
-                onOpen={setDetail}
+                onOpen={(p) => {
+                  trackEvent("view_product", { productId: p.id, name: p.name });
+                  setDetail(p);
+                }}
                 onAdd={handleCardAdd}
               />
             ))}
