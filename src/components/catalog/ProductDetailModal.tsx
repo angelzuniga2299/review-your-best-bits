@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X, MessageCircle, Plus, Share2 } from "lucide-react";
+import { X, MessageCircle, Plus } from "lucide-react";
 import type { Product } from "@/lib/catalog";
 import { formatCurrency, getListPrice, getSalePrice, isOutOfStock, isPorEncargo } from "@/lib/catalog";
 
@@ -31,15 +31,6 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
   const list = getListPrice(p);
   const sale = getSalePrice(p);
   const onSale = p.is_on_sale && p.discount_pct > 0 && sale < list;
-
-  async function handleShare() {
-    const url = window.location.origin + "?producto=" + product.id;
-    if (navigator.share) {
-      try { await navigator.share({ title: product.name, url }); } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-    }
-  }
 
   return (
     <div
@@ -119,10 +110,6 @@ export function ProductDetailModal({ product, onClose, onOrderWhatsApp, onAddToC
         </div>
 
         <footer className="shrink-0 px-4 py-3 sm:px-6 sm:py-5 border-t border-border bg-surface grid grid-cols-1 sm:grid-cols-[auto,1fr] gap-2 sm:gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <button type="button" onClick={handleShare} className="order-3 sm:order-1 h-12 px-4 rounded-xl border border-border text-muted-foreground font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-muted transition-all w-full sm:w-auto">
-            <Share2 className="w-4 h-4 shrink-0" />
-            <span>Compartir</span>
-          </button>
           <button
             type="button"
             disabled={out || isProcessing}
