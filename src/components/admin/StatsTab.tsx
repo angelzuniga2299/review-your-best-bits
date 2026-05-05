@@ -1,8 +1,15 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Package, ShoppingBag, TrendingUp, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Order, Product } from "@/lib/catalog";
 import { formatCurrency } from "@/lib/catalog";
+
+type TrackedEvent = {
+  event: string;
+  data?: Record<string, unknown>;
+  ts: string;
+};
 
 export function StatsTab() {
   const { data } = useQuery({
@@ -29,6 +36,29 @@ export function StatsTab() {
   const sold = orders.filter((o) => o.status === "vendido");
   const revenue = sold.reduce((acc, o) => acc + Number(o.total || 0), 0);
   const pending = orders.filter((o) => o.status === "pendiente").length;
+
+  const [events, setEvents] = useState<TrackedEvent[]>([]);
+
+  const loadEvents = () => {
+    try {
+      const raw = localStorage.getItem("insignia_events") ?? "[]";
+      const parsed = JSON.parse(raw);
+      setEvents(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setEvents([]);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const clearEvents = () => {
+    localStorage.removeItem("insignia_events");
+    loadEvents();
+  };
+
+  const recent = [...events].slice(-20).reverse();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -62,6 +92,39 @@ export function StatsTab() {
           </ul>
         </div>
       )}
+
+      <div className="sm:col-span-2 bg-surface border border-border rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold">Eventos recientes</p>
+          <button
+            type="button"
+            onClick={clearEvents}
+            className="text-xs px-2 py-1 rounded-md border border-border text-muted-foreground hover:bg-muted transition-colors"
+          >
+            Limpiar
+          </button>
+        </div>
+        {recent.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Sin eventos registrados.</p>
+        ) : (
+          <ul className="space-y-1 text-xs">
+            {recent.map((e, i) => (
+              <li
+                key={`${e.ts}-${i}`}
+                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 border-b border-border/50 last:border-0 py-1.5"
+              >
+                <span className="text-muted-foreground shrink-0 w-44">
+                  {new Date(e.ts).toLocaleString("es-CU")}
+                </span>
+                <span className="font-semibold shrink-0">{e.event}</span>
+                <span className="text-muted-foreground break-all font-mono">
+                  {JSON.stringify(e.data ?? {})}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
