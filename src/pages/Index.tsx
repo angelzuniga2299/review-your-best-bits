@@ -24,6 +24,8 @@ import { ProductDetailModal } from "@/components/catalog/ProductDetailModal";
 import { CartDrawer } from "@/components/catalog/CartDrawer";
 import { StoreInfoPanel } from "@/components/catalog/StoreInfoPanel";
 
+const PAGE_SIZE = 12;
+
 const Index = () => {
   const { data: products, isLoading: loadingProducts } = useProducts();
   const { data: filters } = useFilters();
@@ -51,6 +53,11 @@ const Index = () => {
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeFilter, search]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -98,6 +105,11 @@ const Index = () => {
       return true;
     });
   }, [products, activeFilter, search]);
+
+  const paginated = useMemo(
+    () => visible.slice(0, page * PAGE_SIZE),
+    [visible, page]
+  );
 
   const flyToCart = useCallback((sourceEl: HTMLElement) => {
     const target = cartIconRef.current;
@@ -444,7 +456,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
-            {visible.map((p) => (
+            {paginated.map((p) => (
               <ProductCard
                 key={p.id}
                 product={p}
@@ -455,6 +467,17 @@ const Index = () => {
                 onAdd={handleCardAdd}
               />
             ))}
+          </div>
+        )}
+        {visible.length > page * PAGE_SIZE && (
+          <div className="flex justify-center mt-8">
+            <button
+              type="button"
+              onClick={() => setPage((p) => p + 1)}
+              className="px-6 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-muted transition-colors"
+            >
+              Ver más productos
+            </button>
           </div>
         )}
       </main>
