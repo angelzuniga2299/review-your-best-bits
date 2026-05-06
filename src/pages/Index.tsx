@@ -106,6 +106,11 @@ const Index = () => {
     });
   }, [products, activeFilter, search]);
 
+  const paginated = useMemo(
+    () => visible.slice(0, page * PAGE_SIZE),
+    [visible, page]
+  );
+
   const flyToCart = useCallback((sourceEl: HTMLElement) => {
     const target = cartIconRef.current;
     if (!target) return;
