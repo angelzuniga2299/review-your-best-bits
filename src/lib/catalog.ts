@@ -1,3 +1,5 @@
+export const TENANT_ID = (import.meta.env.VITE_TENANT_ID as string) ?? "default";
+
 export type Currency = "USD" | "CUP";
 
 export type Product = {
