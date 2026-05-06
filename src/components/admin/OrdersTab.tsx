@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -79,6 +79,25 @@ export function OrdersTab() {
       return (data ?? []) as Order[];
     },
   });
+
+  const prevCountRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!orders) return;
+    if (prevCountRef.current !== null && orders.length > prevCountRef.current) {
+      toast.success("Nuevo pedido recibido");
+      if (
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        Notification.permission === "granted"
+      ) {
+        new Notification("Insignia — Nuevo pedido", {
+          body: "Revisá la sección de órdenes.",
+        });
+      }
+    }
+    prevCountRef.current = orders.length;
+  }, [orders]);
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: OrderStatus }) => {
@@ -178,6 +197,15 @@ export function OrdersTab() {
             </span>
           )}
         </div>
+        {"Notification" in window && Notification.permission === "default" && (
+          <button
+            type="button"
+            onClick={() => Notification.requestPermission()}
+            className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors text-muted-foreground shrink-0"
+          >
+            Activar notificaciones
+          </button>
+        )}
       </div>
 
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
