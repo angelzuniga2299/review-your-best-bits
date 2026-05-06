@@ -53,6 +53,11 @@ const Index = () => {
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeFilter, search]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
