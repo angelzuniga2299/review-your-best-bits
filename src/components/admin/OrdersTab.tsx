@@ -80,6 +80,25 @@ export function OrdersTab() {
     },
   });
 
+  const prevCountRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!orders) return;
+    if (prevCountRef.current !== null && orders.length > prevCountRef.current) {
+      toast.success("Nuevo pedido recibido");
+      if (
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        Notification.permission === "granted"
+      ) {
+        new Notification("Insignia — Nuevo pedido", {
+          body: "Revisá la sección de órdenes.",
+        });
+      }
+    }
+    prevCountRef.current = orders.length;
+  }, [orders]);
+
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: OrderStatus }) => {
       const { error } = await supabase.from("orders").update({ status }).eq("id", id);
