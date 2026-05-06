@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import type { ProductFilter } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +9,7 @@ type Props = {
 
 export function FilterBar({ filters, active, onChange }: Props) {
   return (
-    <div className="relative">
+    <div>
       <div
         className="flex gap-2 overflow-x-auto no-scrollbar pb-1"
         role="tablist"
@@ -34,8 +33,7 @@ export function FilterBar({ filters, active, onChange }: Props) {
           );
         })}
       </div>
-      <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-background to-transparent pointer-events-none" />
-      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0 ml-1" />
     </div>
   );
 }
+
