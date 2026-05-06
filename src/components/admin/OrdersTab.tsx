@@ -197,6 +197,15 @@ export function OrdersTab() {
             </span>
           )}
         </div>
+        {"Notification" in window && Notification.permission === "default" && (
+          <button
+            type="button"
+            onClick={() => Notification.requestPermission()}
+            className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors text-muted-foreground shrink-0"
+          >
+            Activar notificaciones
+          </button>
+        )}
       </div>
 
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
