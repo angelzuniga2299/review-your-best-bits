@@ -456,7 +456,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
-            {visible.map((p) => (
+            {paginated.map((p) => (
               <ProductCard
                 key={p.id}
                 product={p}
@@ -467,6 +467,17 @@ const Index = () => {
                 onAdd={handleCardAdd}
               />
             ))}
+          </div>
+        )}
+        {visible.length > page * PAGE_SIZE && (
+          <div className="flex justify-center mt-8">
+            <button
+              type="button"
+              onClick={() => setPage((p) => p + 1)}
+              className="px-6 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-muted transition-colors"
+            >
+              Ver más productos
+            </button>
           </div>
         )}
       </main>
