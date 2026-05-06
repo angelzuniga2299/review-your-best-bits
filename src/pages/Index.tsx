@@ -24,6 +24,8 @@ import { ProductDetailModal } from "@/components/catalog/ProductDetailModal";
 import { CartDrawer } from "@/components/catalog/CartDrawer";
 import { StoreInfoPanel } from "@/components/catalog/StoreInfoPanel";
 
+const PAGE_SIZE = 12;
+
 const Index = () => {
   const { data: products, isLoading: loadingProducts } = useProducts();
   const { data: filters } = useFilters();
