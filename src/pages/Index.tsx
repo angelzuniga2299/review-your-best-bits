@@ -103,7 +103,7 @@ const Index = () => {
       }
       if (q && !`${p.name} ${p.description ?? ""}`.toLowerCase().includes(q)) return false;
       return true;
-    });
+    }).sort((a, b) => getSalePrice(b) - getSalePrice(a));
   }, [products, activeFilter, search]);
 
   const paginated = useMemo(
