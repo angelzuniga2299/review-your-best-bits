@@ -400,6 +400,82 @@ function ProductEditModal({
             </div>
           </Field>
 
+          <Field label="Galería de imágenes">
+            <div className="rounded-lg border border-border bg-surface p-3 space-y-3">
+              {((form.image_url && form.image_url.trim()) || (form.gallery_urls?.length ?? 0) > 0) ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {form.image_url && form.image_url.trim() && (
+                    <div className="relative group">
+                      <img
+                        src={form.image_url}
+                        alt="Principal"
+                        className="w-full aspect-square object-cover rounded-lg border-2 border-primary"
+                      />
+                      <span className="absolute top-1 left-1 inline-flex items-center gap-0.5 bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded">
+                        <Star className="w-2.5 h-2.5 fill-current" />
+                        Principal
+                      </span>
+                    </div>
+                  )}
+                  {(form.gallery_urls ?? []).map((url, i) => (
+                    <div key={`${url}-${i}`} className="relative group">
+                      <img
+                        src={url}
+                        alt={`Galería ${i + 1}`}
+                        className="w-full aspect-square object-cover rounded-lg border border-border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveGallery(i)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:scale-110 transition-transform"
+                        aria-label="Eliminar imagen"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetPrimary(i)}
+                        className="absolute bottom-1 left-1 right-1 text-[9px] font-semibold bg-background/90 hover:bg-background text-foreground rounded px-1 py-0.5 transition-colors"
+                      >
+                        Hacer principal
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Sin imágenes adicionales.</p>
+              )}
+
+              {((form.gallery_urls?.length ?? 0) + (form.image_url?.trim() ? 1 : 0)) < 8 && (
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-surface text-sm font-medium cursor-pointer hover:bg-muted transition-colors">
+                  {galleryUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Subiendo…
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      Agregar imagen
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleGalleryUpload}
+                    disabled={galleryUploading}
+                    className="hidden"
+                  />
+                </label>
+              )}
+              <p className="text-[11px] text-muted-foreground">
+                {(form.gallery_urls?.length ?? 0) + (form.image_url?.trim() ? 1 : 0)} / 8 imágenes
+              </p>
+            </div>
+          </Field>
+
+
+
           <Field label="Garantía">
             <select
               value={form.warranty ?? ""}
