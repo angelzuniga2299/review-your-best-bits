@@ -191,10 +191,14 @@ function ProductEditModal({
   onSave: (p: Partial<Product>) => void;
   saving: boolean;
 }) {
-  const [form, setForm] = useState<Partial<Product>>(product);
+  const [form, setForm] = useState<Partial<Product>>({
+    ...product,
+    gallery_urls: product.gallery_urls ?? [],
+  });
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
 
   function set<K extends keyof Product>(k: K, v: Product[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -208,7 +212,56 @@ function ProductEditModal({
     setPreviewUrl(URL.createObjectURL(file));
   }
 
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setGalleryUploading(true);
+    try {
+      const fileName = `${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage
+        .from(BUCKET)
+        .upload(fileName, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+      setForm((f) => ({
+        ...f,
+        gallery_urls: [...(f.gallery_urls ?? []), pub.publicUrl],
+      }));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error al subir";
+      toast.error(`No se pudo subir la imagen: ${msg}`);
+    } finally {
+      setGalleryUploading(false);
+    }
+  }
+
+  function handleRemoveGallery(index: number) {
+    setForm((f) => ({
+      ...f,
+      gallery_urls: (f.gallery_urls ?? []).filter((_, i) => i !== index),
+    }));
+  }
+
+  function handleSetPrimary(index: number) {
+    setForm((f) => {
+      const gallery = [...(f.gallery_urls ?? [])];
+      const newPrimary = gallery[index];
+      if (!newPrimary) return f;
+      const oldPrimary = f.image_url?.trim() ? f.image_url : "";
+      gallery.splice(index, 1);
+      if (oldPrimary) gallery.push(oldPrimary);
+      return { ...f, image_url: newPrimary, gallery_urls: gallery };
+    });
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      setPendingFile(null);
+    }
+  }
+
   return (
+
     <div
       className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
