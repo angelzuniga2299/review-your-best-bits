@@ -164,7 +164,10 @@ const Index = () => {
     (text: string) => {
       const num = settings?.whatsapp_number?.trim();
       if (!num) return null;
-      return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      return isMobile
+        ? `https://wa.me/${num}?text=${encodeURIComponent(text)}`
+        : `https://web.whatsapp.com/send?phone=${num}&text=${encodeURIComponent(text)}`;
     },
     [settings?.whatsapp_number]
   );
