@@ -59,6 +59,7 @@ export function ProductsTab({ filters }: { filters: ProductFilter[] }) {
         is_on_sale: !!p.is_on_sale,
         discount_pct: Math.max(0, Math.min(95, Number(p.discount_pct) || 0)),
         image_url: p.image_url ?? "",
+        gallery_urls: Array.isArray(p.gallery_urls) ? p.gallery_urls : [],
         warranty: p.warranty ?? "",
         is_new: !!p.is_new,
         sort_order: Number(p.sort_order) || 0,
