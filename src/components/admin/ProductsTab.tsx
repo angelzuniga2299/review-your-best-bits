@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { Pencil, Trash2, Plus, X, Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Product, ProductFilter } from "@/lib/catalog";
 import { formatCurrency, getSalePrice } from "@/lib/catalog";
+
 
 const empty: Partial<Product> = {
   name: "",
