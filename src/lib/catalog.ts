@@ -15,6 +15,7 @@ export type Product = {
   is_on_sale: boolean;
   discount_pct: number;
   image_url: string | null;
+  gallery_urls: string[];
   warranty: string | null;
   is_new: boolean;
   sort_order: number;
