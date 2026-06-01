@@ -19,10 +19,12 @@ const empty: Partial<Product> = {
   is_on_sale: false,
   discount_pct: 0,
   image_url: "",
+  gallery_urls: [],
   warranty: "",
   is_new: false,
   sort_order: 0,
 };
+
 
 const BUCKET = "product-images";
 
