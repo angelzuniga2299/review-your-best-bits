@@ -127,6 +127,7 @@ export type Database = {
           delivery_time: string | null
           description: string | null
           discount_pct: number
+          gallery_urls: string[]
           id: string
           image_url: string | null
           is_new: boolean
@@ -146,6 +147,7 @@ export type Database = {
           delivery_time?: string | null
           description?: string | null
           discount_pct?: number
+          gallery_urls?: string[]
           id?: string
           image_url?: string | null
           is_new?: boolean
@@ -165,6 +167,7 @@ export type Database = {
           delivery_time?: string | null
           description?: string | null
           discount_pct?: number
+          gallery_urls?: string[]
           id?: string
           image_url?: string | null
           is_new?: boolean
