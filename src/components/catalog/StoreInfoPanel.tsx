@@ -81,7 +81,11 @@ export function StoreInfoPanel({ open, onOpenChange, settings }: StoreInfoPanelP
   function openWhatsApp() {
     if (!whatsapp) return;
     const msg = encodeURIComponent(`Hola, vi su catálogo de ${businessName} y quería consultar.`);
-    window.open(`https://wa.me/${whatsapp}?text=${msg}`, "_blank", "noopener");
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const url = isMobile
+      ? `https://wa.me/${whatsapp}?text=${msg}`
+      : `https://web.whatsapp.com/send?phone=${whatsapp}&text=${msg}`;
+    window.open(url, "_blank", "noopener");
   }
 
   return (
