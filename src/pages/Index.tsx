@@ -210,44 +210,40 @@ const Index = () => {
         notes: opts.notes ?? null,
       });
       if (error) throw error;
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
+      ]);
+
+      const link = whatsAppLink(opts.whatsappMessage);
+      if (link) {
+        window.open(link, "_blank", "noopener");
+      } else {
+        toast.error("Número de contacto no configurado. Contacta al administrador.");
+      }
+      opts.onSuccess?.();
+      toast.success(opts.successToast);
+      setConfirmation("Pedido enviado correctamente");
     } catch (err) {
       const m = (err as { message?: string })?.message ?? "";
       if (/Stock insuficiente/i.test(m)) {
         toast.error("Stock insuficiente. El catálogo se actualizó.");
       } else {
-        console.error("Order insert failed:", err);
         toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
       }
-      // Refresh catalog so UI matches DB, then re-enable button for retry.
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["products"] }),
         queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
       ]);
+    } finally {
       processingLockRef.current = false;
       setIsProcessing(false);
-      return;
     }
-
-    // Success: refresh everything that depends on stock / orders.
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["products"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-stats"] }),
-    ]);
-
-    const link = whatsAppLink(opts.whatsappMessage);
-    if (link) {
-      window.open(link, "_blank", "noopener");
-    } else {
-      toast.error("Número de contacto no configurado. Contacta al administrador.");
-    }
-    opts.onSuccess?.();
-    toast.success(opts.successToast);
-    setConfirmation("Pedido enviado correctamente");
-    processingLockRef.current = false;
-    setIsProcessing(false);
   }
+
 
   /**
    * Build the WhatsApp message for an order (single item or full cart).
