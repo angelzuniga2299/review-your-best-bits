@@ -108,8 +108,8 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
               "disabled:opacity-40 disabled:pointer-events-none"
             )}
           >
-            <MessageCircle className="w-4 h-4" />
-            <span>Ordenar</span>
+            <Eye className="w-4 h-4" />
+            <span>Ver detalles</span>
           </button>
           <button
             type="button"
