@@ -52,12 +52,18 @@ const Index = () => {
   const queryClient = useQueryClient();
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(searchInput), 200);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     setPage(1);
-  }, [activeFilter, search]);
+  }, [activeFilter, searchInput]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
