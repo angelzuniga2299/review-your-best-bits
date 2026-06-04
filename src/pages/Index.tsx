@@ -432,8 +432,8 @@ const Index = () => {
                 id="catalog-search"
                 type="search"
                 placeholder="Buscar producto"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full border border-white/30 rounded-full pl-10 pr-4 py-2 text-sm bg-white/95 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm"
               />
             </div>
