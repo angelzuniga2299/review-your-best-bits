@@ -236,6 +236,7 @@ const Index = () => {
       opts.onSuccess?.();
       toast.success(opts.successToast);
       setConfirmation("Pedido enviado correctamente");
+      setTimeout(() => setConfirmation(null), 4000);
     } catch (err) {
       const m = (err as { message?: string })?.message ?? "";
       if (/Stock insuficiente/i.test(m)) {
