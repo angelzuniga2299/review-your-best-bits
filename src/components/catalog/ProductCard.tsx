@@ -18,7 +18,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
   const onSale = p.is_on_sale && p.discount_pct > 0 && sale < list;
 
   return (
-    <article
+    <div
       className={cn("product-card h-full", out && "is-sold-out")}
       data-clickable={out ? "false" : "true"}
       onClick={() => !out && onOpen(p)}
@@ -129,7 +129,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
           </button>
         </div>
       </div>
-    </article>
+    </div>
   );
 }
 
