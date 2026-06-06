@@ -90,6 +90,7 @@ export function CartDrawer({
                     <button
                       type="button"
                       onClick={() => onSetQty(it.productId, it.qty - 1)}
+                      disabled={isProcessing}
                       className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-muted"
                       aria-label="Disminuir cantidad"
                     >
@@ -99,6 +100,7 @@ export function CartDrawer({
                     <button
                       type="button"
                       onClick={() => onSetQty(it.productId, it.qty + 1)}
+                      disabled={isProcessing}
                       className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-muted"
                       aria-label="Aumentar cantidad"
                     >
@@ -107,6 +109,7 @@ export function CartDrawer({
                     <button
                       type="button"
                       onClick={() => onRemove(it.productId)}
+                      disabled={isProcessing}
                       className="ml-auto text-destructive hover:opacity-70"
                       aria-label="Eliminar producto"
                     >
