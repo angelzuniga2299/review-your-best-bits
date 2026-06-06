@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Settings, Info } from "lucide-react";
+import { ShoppingCart, Search, Settings, Info, Clock, X } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
 import { useCart } from "@/hooks/useCart";
@@ -70,6 +70,7 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [cartNotes, setCartNotes] = useState("");
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const cartIconRef = useRef<HTMLButtonElement>(null);
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
@@ -451,6 +452,24 @@ const Index = () => {
           />
         </div>
       </header>
+
+      {!storeStatus.isOpen && !bannerDismissed && (
+        <div className="bg-warning/10 border-b border-warning/30 px-4 py-3 flex items-start gap-3">
+          <Clock className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+          <p className="text-sm text-foreground/80 flex-1">
+            <span className="font-semibold text-warning">Ahora estamos cerrados</span>
+            {" "}— {storeStatus.nextChangeLabel}. Podés hacer tu pedido y lo atenderemos cuando abramos.
+          </p>
+          <button
+            type="button"
+            onClick={() => setBannerDismissed(true)}
+            className="text-muted-foreground hover:text-foreground shrink-0"
+            aria-label="Cerrar aviso"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-8">
         {loadingProducts ? (
