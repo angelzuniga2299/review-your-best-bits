@@ -109,7 +109,11 @@ const Index = () => {
       }
       if (q && !`${p.name} ${p.description ?? ""}`.toLowerCase().includes(q)) return false;
       return true;
-    }).sort((a, b) => getSalePrice(b) - getSalePrice(a));
+    }).sort((a, b) => {
+      const orderDiff = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+      if (orderDiff !== 0) return orderDiff;
+      return (a.created_at > b.created_at ? -1 : 1);
+    });
   }, [products, activeFilter, search]);
 
   const paginated = useMemo(
