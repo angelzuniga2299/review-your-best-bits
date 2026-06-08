@@ -67,6 +67,28 @@ const Index = () => {
   useEffect(() => {
     setPage(1);
   }, [activeFilter, searchInput]);
+
+  useEffect(() => {
+    if (!cartOpen || !products) return;
+    cart.items.forEach((item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) {
+        cart.remove(item.productId);
+        toast.error(`"${item.name}" ya no está disponible y fue eliminado del carrito.`);
+        return;
+      }
+      if (!product.por_encargo && product.stock <= 0) {
+        cart.remove(item.productId);
+        toast.error(`"${item.name}" se agotó y fue eliminado del carrito.`);
+        return;
+      }
+      if (!product.por_encargo && item.qty > product.stock) {
+        cart.setQty(item.productId, product.stock);
+        toast(`"${item.name}": cantidad ajustada a ${product.stock} (stock disponible).`);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartOpen]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
