@@ -389,7 +389,7 @@ const Index = () => {
               <h1 className="brand-logo text-3xl sm:text-4xl text-white drop-shadow-md">
                 {settings?.business_name ?? "Insignia"}
               </h1>
-              <p className="text-sm text-white/90 mt-1.5 leading-snug drop-shadow">
+              <p className="hidden sm:block text-sm text-white/90 mt-1.5 leading-snug drop-shadow">
                 El futuro de tu confort, listo para ordenar
               </p>
             </div>
