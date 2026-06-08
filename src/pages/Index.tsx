@@ -425,7 +425,7 @@ const Index = () => {
             <button
               type="button"
               onClick={() => setInfoOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 backdrop-blur px-3 py-2 text-xs font-medium text-white hover:bg-white/25 transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur px-3 py-2 text-xs font-medium text-white/90 hover:bg-white/20 transition-colors shrink-0"
               aria-label="Información de la tienda"
             >
               <Info className="w-3.5 h-3.5" />
