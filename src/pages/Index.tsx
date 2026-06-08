@@ -381,6 +381,7 @@ const Index = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${headerBg})` }}
         />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex justify-between items-start gap-3 mb-4">
@@ -388,7 +389,7 @@ const Index = () => {
               <h1 className="brand-logo text-3xl sm:text-4xl text-white drop-shadow-md">
                 {settings?.business_name ?? "Insignia"}
               </h1>
-              <p className="text-sm text-white/90 mt-1.5 leading-snug drop-shadow">
+              <p className="hidden sm:block text-sm text-white/90 mt-1.5 leading-snug drop-shadow">
                 El futuro de tu confort, listo para ordenar
               </p>
             </div>
