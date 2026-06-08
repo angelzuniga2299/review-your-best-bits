@@ -56,7 +56,10 @@ const Index = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput), 200);
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      if (searchInput.trim()) setActiveFilter("all");
+    }, 200);
     return () => clearTimeout(timer);
   }, [searchInput]);
   const [page, setPage] = useState(1);
