@@ -425,7 +425,7 @@ const Index = () => {
             <button
               type="button"
               onClick={() => setInfoOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 backdrop-blur px-3 py-2 text-xs font-medium text-white hover:bg-white/25 transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur px-3 py-2 text-xs font-medium text-white/90 hover:bg-white/20 transition-colors shrink-0"
               aria-label="Información de la tienda"
             >
               <Info className="w-3.5 h-3.5" />
@@ -435,10 +435,10 @@ const Index = () => {
             <button
               type="button"
               onClick={() => setInfoOpen(true)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors shrink-0 backdrop-blur ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-colors shrink-0 backdrop-blur shadow-sm ${
                 storeStatus.isOpen
-                  ? "border border-green-400/50 bg-green-500/25 text-white hover:bg-green-500/35"
-                  : "border border-red-400/50 bg-red-500/25 text-white hover:bg-red-500/35"
+                  ? "border border-green-400/60 bg-green-500/35 text-white hover:bg-green-500/50"
+                  : "border border-red-400/60 bg-red-500/35 text-white hover:bg-red-500/50"
               }`}
               aria-label={`Estado de la tienda: ${storeStatus.label}`}
             >
