@@ -56,7 +56,10 @@ const Index = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput), 200);
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      if (searchInput.trim()) setActiveFilter("all");
+    }, 200);
     return () => clearTimeout(timer);
   }, [searchInput]);
   const [page, setPage] = useState(1);
@@ -481,8 +484,22 @@ const Index = () => {
         ) : visible.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
             <p className="text-lg font-medium text-foreground mb-1">Sin resultados</p>
-            <p className="text-sm">Probá con otra búsqueda o categoría.</p>
+            <p className="text-sm">
+              {search.trim()
+                ? "No encontramos productos con ese nombre."
+                : "No hay productos en esta categoría."}
+            </p>
+            {activeFilter !== "all" && (
+              <button
+                type="button"
+                onClick={() => setActiveFilter("all")}
+                className="mt-3 text-sm text-primary underline"
+              >
+                Ver todos los productos
+              </button>
+            )}
           </div>
+
         ) : (
           <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
             {paginated.map((p) => (
