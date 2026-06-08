@@ -67,6 +67,13 @@ const Index = () => {
   useEffect(() => {
     setPage(1);
   }, [activeFilter, searchInput]);
+  const [detail, setDetail] = useState<Product | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [cartNotes, setCartNotes] = useState("");
+  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   useEffect(() => {
     if (!cartOpen || !products) return;
@@ -89,13 +96,6 @@ const Index = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartOpen]);
-  const [detail, setDetail] = useState<Product | null>(null);
-  const [cartOpen, setCartOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [confirmation, setConfirmation] = useState<string | null>(null);
-  const [cartNotes, setCartNotes] = useState("");
-  const [bannerDismissed, setBannerDismissed] = useState(false);
   const cartIconRef = useRef<HTMLButtonElement>(null);
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
