@@ -524,7 +524,7 @@ const Index = () => {
           </div>
 
         ) : (
-          <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+          <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
             {paginated.map((p) => (
               <ProductCard
                 key={p.id}
