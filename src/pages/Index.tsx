@@ -47,7 +47,7 @@ const Index = () => {
     }
   }, [settings]);
 
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading } = useAuth();
   const cart = useCart();
   const queryClient = useQueryClient();
 
@@ -394,7 +394,7 @@ const Index = () => {
               </p>
             </div>
             <div className="flex items-center gap-1">
-              {isAdmin && (
+              {!loading && isAdmin && (
                 <Link
                   to="/admin"
                   className="p-2 rounded-lg hover:bg-white/10 transition-colors"
