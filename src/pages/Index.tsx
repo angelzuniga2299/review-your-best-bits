@@ -499,7 +499,7 @@ const Index = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-8">
         {loadingProducts ? (
-          <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+          <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
             {Array.from({ length: 6 }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
@@ -524,7 +524,7 @@ const Index = () => {
           </div>
 
         ) : (
-          <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+          <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
             {paginated.map((p) => (
               <ProductCard
                 key={p.id}
