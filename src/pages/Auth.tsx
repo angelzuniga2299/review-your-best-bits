@@ -15,7 +15,8 @@ const Auth = () => {
   const [resetEmail, setResetEmail] = useState("");
 
   useEffect(() => {
-    if (!loading && session && isAdmin) {
+    if (loading) return;
+    if (session && isAdmin) {
       navigate("/admin", { replace: true });
     }
   }, [session, isAdmin, loading, navigate]);
