@@ -55,21 +55,26 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-6 py-4 border-b border-border">
+      <header className="relative overflow-hidden bg-secondary px-6 py-8 text-center">
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+        <div className="relative">
+          <h1 className="brand-logo text-4xl text-white mb-1">Insignia</h1>
+          <p className="text-sm text-white/70">Panel de administración</p>
+        </div>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          className="absolute top-4 left-4 inline-flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Volver al catálogo
+          <ArrowLeft className="w-3.5 h-3.5" /> Catálogo
         </Link>
       </header>
 
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm bg-surface-muted border border-border rounded-2xl p-6 sm:p-8 shadow-card">
           <div className="text-center mb-6">
-            <h1 className="brand-logo text-3xl mb-2">Insignia</h1>
-            <p className="text-sm text-muted-foreground">Acceso vendedor</p>
+            <p className="text-sm text-muted-foreground">Ingresá tus credenciales para continuar</p>
           </div>
+
 
           {mode === "signin" ? (
             <>
