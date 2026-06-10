@@ -62,11 +62,25 @@ const Index = () => {
     }, 200);
     return () => clearTimeout(timer);
   }, [searchInput]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const p = parseInt(searchParams.get("page") ?? "1", 10);
+    return isNaN(p) || p < 1 ? 1 : p;
+  });
 
   useEffect(() => {
     setPage(1);
+    searchParams.delete("page");
+    setSearchParams(searchParams, { replace: true });
   }, [activeFilter, searchInput]);
+
+  useEffect(() => {
+    if (page === 1) {
+      searchParams.delete("page");
+    } else {
+      searchParams.set("page", String(page));
+    }
+    setSearchParams(searchParams, { replace: true });
+  }, [page]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
