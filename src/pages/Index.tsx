@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info, Clock, X } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
