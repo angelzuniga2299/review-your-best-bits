@@ -47,7 +47,7 @@ const Index = () => {
     }
   }, [settings]);
 
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading } = useAuth();
   const cart = useCart();
   const queryClient = useQueryClient();
 
