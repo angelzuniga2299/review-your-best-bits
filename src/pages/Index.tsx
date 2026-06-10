@@ -50,6 +50,7 @@ const Index = () => {
   const { isAdmin, loading } = useAuth();
   const cart = useCart();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchInput, setSearchInput] = useState("");
