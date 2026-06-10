@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingCart, Search, Settings, Info, Clock, X } from "lucide-react";
 import headerBg from "@/assets/header-bg.png";
 import { useProducts, useFilters, useSettings } from "@/hooks/useCatalogData";
@@ -50,6 +50,7 @@ const Index = () => {
   const { isAdmin, loading } = useAuth();
   const cart = useCart();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchInput, setSearchInput] = useState("");
@@ -62,11 +63,25 @@ const Index = () => {
     }, 200);
     return () => clearTimeout(timer);
   }, [searchInput]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const p = parseInt(searchParams.get("page") ?? "1", 10);
+    return isNaN(p) || p < 1 ? 1 : p;
+  });
 
   useEffect(() => {
     setPage(1);
+    searchParams.delete("page");
+    setSearchParams(searchParams, { replace: true });
   }, [activeFilter, searchInput]);
+
+  useEffect(() => {
+    if (page === 1) {
+      searchParams.delete("page");
+    } else {
+      searchParams.set("page", String(page));
+    }
+    setSearchParams(searchParams, { replace: true });
+  }, [page]);
   const [detail, setDetail] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
