@@ -16,30 +16,6 @@ export function useAuth(): AuthState {
 
   useEffect(() => {
     let mounted = true;
-
-    // Listener PRIMERO
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      if (!mounted) return;
-      setSession(newSession);
-      if (newSession?.user) {
-        // Defer role check to avoid deadlock
-        setTimeout(() => checkRole(newSession.user.id), 0);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    // LUEGO sesión actual
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      if (!mounted) return;
-      setSession(s);
-      if (s?.user) {
-        checkRole(s.user.id).finally(() => mounted && setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
-
     async function checkRole(userId: string) {
       const { data } = await supabase
         .from("user_roles")
@@ -49,7 +25,29 @@ export function useAuth(): AuthState {
         .maybeSingle();
       if (mounted) setIsAdmin(!!data);
     }
-
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, newSession) => {
+        if (!mounted) return;
+        setSession(newSession);
+        if (newSession?.user) {
+          setTimeout(() => checkRole(newSession.user.id), 0);
+        } else {
+          setIsAdmin(false);
+          setLoading(false);
+        }
+      }
+    );
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      if (!mounted) return;
+      setSession(s);
+      if (s?.user) {
+        checkRole(s.user.id).finally(() => {
+          if (mounted) setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
+    });
     return () => {
       mounted = false;
       subscription.unsubscribe();
