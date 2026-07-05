@@ -9,7 +9,12 @@ function load(): CartItem[] {
     const raw = localStorage.getItem(CART_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(item => ({
+      ...item,
+      stock: typeof item.stock === 'number' ? item.stock : 0,
+      qty: typeof item.stock === 'number' ? Math.min(item.qty, item.por_encargo ? item.qty : Math.max(item.stock, 1)) : 1
+    }));
   } catch {
     return [];
   }
@@ -44,7 +49,7 @@ export function useCart() {
     setItems((prev) => {
       const existing = prev.find((x) => x.productId === p.id);
       const price = getSalePrice(p);
-      const cap = p.por_encargo ? Infinity : p.stock;
+      const cap = p.por_encargo ? Infinity : Math.max(p.stock, 0);
       if (existing) {
         const nextQty = Math.min(existing.qty + qty, cap);
         if (nextQty === existing.qty) return prev;
@@ -75,7 +80,7 @@ export function useCart() {
     setItems((prev) => {
       const item = prev.find((x) => x.productId === productId);
       if (!item) return prev;
-      const cap = item.por_encargo ? Infinity : (item.stock ?? Infinity);
+      const cap = item.por_encargo ? Infinity : (typeof item.stock === 'number' ? item.stock : 1);
       const nextQty = Math.min(qty, cap);
       if (nextQty <= 0) return prev.filter((x) => x.productId !== productId);
       if (nextQty === item.qty) return prev;
