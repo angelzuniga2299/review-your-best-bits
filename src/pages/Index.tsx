@@ -245,6 +245,8 @@ const Index = () => {
     items: OrderItem[];
     whatsappMessage: string;
     notes?: string;
+    customer_name?: string | null;
+    customer_phone?: string | null;
     onSuccess?: () => void;
     successToast: string;
   }) {
@@ -264,6 +266,8 @@ const Index = () => {
         currency,
         status: "pendiente",
         notes: opts.notes ?? null,
+        customer_name: opts.customer_name ?? null,
+        customer_phone: opts.customer_phone ?? null,
       });
       if (error) throw error;
 
