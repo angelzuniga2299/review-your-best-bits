@@ -10,6 +10,10 @@ type Props = {
   currency: Currency;
   notes: string;
   onNotesChange: (value: string) => void;
+  customerName: string;
+  customerPhone: string;
+  onCustomerNameChange: (value: string) => void;
+  onCustomerPhoneChange: (value: string) => void;
   onClose: () => void;
   onRemove: (productId: string) => void;
   onSetQty: (productId: string, qty: number) => void;
@@ -24,6 +28,10 @@ export function CartDrawer({
   currency,
   notes,
   onNotesChange,
+  customerName,
+  customerPhone,
+  onCustomerNameChange,
+  onCustomerPhoneChange,
   onClose,
   onRemove,
   onSetQty,

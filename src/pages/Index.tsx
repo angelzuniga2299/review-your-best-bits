@@ -88,6 +88,8 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [cartNotes, setCartNotes] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
   useEffect(() => {
