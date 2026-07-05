@@ -17,19 +17,16 @@ export function useAuth(): AuthState {
   useEffect(() => {
     let mounted = true;
     async function checkRole(userId: string) {
-      console.log("checkRole called with userId:", userId);
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId)
         .eq("role", "admin")
         .maybeSingle();
-      console.log("checkRole result:", { data, error });
       if (mounted) setIsAdmin(!!data);
     }
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
-        console.log("onAuthStateChange:", _event, newSession?.user?.id);
         if (!mounted) return;
         setSession(newSession);
         if (newSession?.user) {
