@@ -10,10 +10,6 @@ type Props = {
   currency: Currency;
   notes: string;
   onNotesChange: (value: string) => void;
-  customerName: string;
-  customerPhone: string;
-  onCustomerNameChange: (value: string) => void;
-  onCustomerPhoneChange: (value: string) => void;
   onClose: () => void;
   onRemove: (productId: string) => void;
   onSetQty: (productId: string, qty: number) => void;
@@ -28,10 +24,6 @@ export function CartDrawer({
   currency,
   notes,
   onNotesChange,
-  customerName,
-  customerPhone,
-  onCustomerNameChange,
-  onCustomerPhoneChange,
   onClose,
   onRemove,
   onSetQty,
@@ -140,22 +132,6 @@ export function CartDrawer({
               Los precios se confirman al finalizar el pedido.
             </p>
           )}
-          <input
-            type="text"
-            value={customerName}
-            onChange={(e) => onCustomerNameChange(e.target.value)}
-            placeholder="Tu nombre (opcional)"
-            disabled={items.length === 0}
-            className="w-full text-sm rounded-xl border border-border bg-surface px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-          />
-          <input
-            type="tel"
-            value={customerPhone}
-            onChange={(e) => onCustomerPhoneChange(e.target.value)}
-            placeholder="Tu teléfono / WhatsApp (opcional)"
-            disabled={items.length === 0}
-            className="w-full text-sm rounded-xl border border-border bg-surface px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-          />
           <textarea
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}

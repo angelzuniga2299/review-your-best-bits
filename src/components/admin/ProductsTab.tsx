@@ -498,10 +498,7 @@ function ProductEditModal({
               <Toggle
                 label="Marcar Por Encargo"
                 value={!!form.por_encargo}
-                onChange={(v) => {
-                  set("por_encargo", v);
-                  if (!v) set("delivery_time", "");
-                }}
+                onChange={(v) => set("por_encargo", v)}
               />
               <Toggle
                 label="Marcar como Nuevo"

@@ -88,8 +88,6 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [cartNotes, setCartNotes] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
   useEffect(() => {
@@ -245,8 +243,6 @@ const Index = () => {
     items: OrderItem[];
     whatsappMessage: string;
     notes?: string;
-    customer_name?: string | null;
-    customer_phone?: string | null;
     onSuccess?: () => void;
     successToast: string;
   }) {
@@ -266,8 +262,6 @@ const Index = () => {
         currency,
         status: "pendiente",
         notes: opts.notes ?? null,
-        customer_name: opts.customer_name ?? null,
-        customer_phone: opts.customer_phone ?? null,
       });
       if (error) throw error;
 
@@ -384,14 +378,10 @@ const Index = () => {
       items,
       whatsappMessage: msg,
       notes: trimmedNotes || undefined,
-      customer_name: customerName.trim() || null,
-      customer_phone: customerPhone.trim() || null,
       successToast: "Pedido registrado y enviado por WhatsApp",
       onSuccess: () => {
         cart.clear();
         setCartNotes("");
-        setCustomerName("");
-        setCustomerPhone("");
         setCartOpen(false);
       },
     });
@@ -603,10 +593,6 @@ const Index = () => {
         currency={cart.currency}
         notes={cartNotes}
         onNotesChange={setCartNotes}
-        customerName={customerName}
-        customerPhone={customerPhone}
-        onCustomerNameChange={setCustomerName}
-        onCustomerPhoneChange={setCustomerPhone}
         onClose={() => setCartOpen(false)}
         onRemove={cart.remove}
         onSetQty={cart.setQty}
