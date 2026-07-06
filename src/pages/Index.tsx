@@ -115,19 +115,6 @@ const Index = () => {
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
   const navigate = useNavigate();
-  // Hidden 3-click access to /auth via the footer copyright.
-  const secretClicksRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
-  const handleSecretAccessClick = useCallback(() => {
-    const now = Date.now();
-    const { count, last } = secretClicksRef.current;
-    const within = now - last <= 1500;
-    const nextCount = within ? count + 1 : 1;
-    secretClicksRef.current = { count: nextCount, last: now };
-    if (nextCount >= 3) {
-      secretClicksRef.current = { count: 0, last: 0 };
-      navigate("/auth");
-    }
-  }, [navigate]);
 
   const storeStatus = useStoreStatus(
     settings
@@ -435,7 +422,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Single row: Info pill + Status pill + Search */}
+          {/* Single row: Info pill + Search */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <button
               type="button"
@@ -446,28 +433,14 @@ const Index = () => {
               <Info className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">Información</span>
               <span className="xs:hidden">Info</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setInfoOpen(true)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-colors shrink-0 backdrop-blur shadow-sm ${
-                storeStatus.isOpen
-                  ? "border border-green-400/60 bg-green-500/35 text-white hover:bg-green-500/50"
-                  : "border border-red-400/60 bg-red-500/35 text-white hover:bg-red-500/50"
-              }`}
-              aria-label={`Estado de la tienda: ${storeStatus.label}`}
-            >
-              <span className="relative flex h-2 w-2" aria-hidden>
-                {storeStatus.isOpen && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-80" />
-                )}
-                <span
-                  className={`relative inline-flex h-2 w-2 rounded-full ${
-                    storeStatus.isOpen ? "bg-green-400" : "bg-red-400"
-                  }`}
-                />
+              <span className="opacity-50">·</span>
+              <span className={storeStatus.isOpen ? "text-green-300" : "text-red-300"}>
+                <span className="relative flex h-2 w-2 inline-flex mr-1" aria-hidden>
+                  {storeStatus.isOpen && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-80" />}
+                  <span className={`relative inline-flex h-2 w-2 rounded-full ${storeStatus.isOpen ? "bg-green-400" : "bg-red-400"}`} />
+                </span>
+                {storeStatus.label}
               </span>
-              {storeStatus.label}
             </button>
 
             <div className="relative flex-1 min-w-[180px]">
@@ -569,7 +542,7 @@ const Index = () => {
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground select-none">
-            <span onClick={handleSecretAccessClick}>{settings?.business_name ?? "Insignia"}</span>
+            <span>{settings?.business_name ?? "Insignia"}</span>
             {" "}© {new Date().getFullYear()}. Todos los derechos reservados.
           </p>
         </div>
