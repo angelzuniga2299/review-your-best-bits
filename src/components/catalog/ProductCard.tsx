@@ -83,7 +83,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
               <span className="text-xs text-muted-foreground line-through">
                 {formatCurrency(list, p.currency)}
               </span>
-              <span className="animate-sale text-xs font-bold text-primary">-{p.discount_pct}%</span>
+              <span className="animate-sale text-xs">-{p.discount_pct}%</span>
             </div>
           )}
 
