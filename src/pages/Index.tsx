@@ -115,19 +115,6 @@ const Index = () => {
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
   const navigate = useNavigate();
-  // Hidden 3-click access to /auth via the footer copyright.
-  const secretClicksRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
-  const handleSecretAccessClick = useCallback(() => {
-    const now = Date.now();
-    const { count, last } = secretClicksRef.current;
-    const within = now - last <= 1500;
-    const nextCount = within ? count + 1 : 1;
-    secretClicksRef.current = { count: nextCount, last: now };
-    if (nextCount >= 3) {
-      secretClicksRef.current = { count: 0, last: 0 };
-      navigate("/auth");
-    }
-  }, [navigate]);
 
   const storeStatus = useStoreStatus(
     settings
