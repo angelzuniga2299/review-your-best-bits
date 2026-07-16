@@ -576,6 +576,33 @@ const Index = () => {
         )}
       </main>
 
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 mt-20 mb-8">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-foreground">¿Cómo ordenar?</h2>
+          <p className="text-sm text-muted-foreground mt-2">Tu equipo ideal a solo tres pasos de distancia.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          {[
+            { step: "1", icon: "🛒", title: "Elige tu producto", desc: "Explora el catálogo y añade lo que quieras al carrito." },
+            { step: "2", icon: "💬", title: "Escríbenos por WhatsApp", desc: "Confirmamos disponibilidad, precio final y forma de pago." },
+            { step: "3", icon: "🚚", title: "Recibe en casa", desc: "Coordinamos la entrega a tu dirección." },
+          ].map(({ step, icon, title, desc }) => (
+            <div key={step} className="flex flex-col items-center text-center gap-3">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-2xl">
+                  {icon}
+                </div>
+                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
+                  {step}
+                </span>
+              </div>
+              <p className="text-sm font-bold text-foreground">{title}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground select-none">
