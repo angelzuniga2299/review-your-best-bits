@@ -593,7 +593,7 @@ const Index = () => {
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground select-none">
-            <span onClick={handleSecretAccessClick}>{settings?.business_name ?? "Insignia"}</span>
+            <span>{settings?.business_name ?? "Insignia"}</span>
             {" "}© {new Date().getFullYear()}. Todos los derechos reservados.
           </p>
         </div>
