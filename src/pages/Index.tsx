@@ -571,8 +571,8 @@ const Index = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {[
             { step: "1", icon: "🛒", title: "Elige tu producto", desc: "Explora el catálogo y añade lo que quieras al carrito." },
-            { step: "2", icon: "💬", title: "Escríbenos por WhatsApp", desc: "Confirmamos disponibilidad, precio final y forma de pago." },
-            { step: "3", icon: "🚚", title: "Recibe en casa", desc: "Coordinamos la entrega a tu dirección." },
+            { step: "2", icon: "✅", title: "Confirma tu pedido", desc: "Al finalizar, te abrimos WhatsApp automáticamente con tu pedido listo para enviar." },
+            { step: "3", icon: "📦", title: "Recibe tu pedido", desc: "Coordinamos contigo la forma de entrega." },
           ].map(({ step, icon, title, desc }) => (
             <div key={step} className="flex flex-col items-center text-center gap-3">
               <div className="relative">
