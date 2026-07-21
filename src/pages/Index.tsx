@@ -117,19 +117,6 @@ const Index = () => {
   // Synchronous lock to block double-clicks before React re-renders.
   const processingLockRef = useRef(false);
   const navigate = useNavigate();
-  // Hidden 3-click access to /auth via the footer copyright.
-  const secretClicksRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
-  const handleSecretAccessClick = useCallback(() => {
-    const now = Date.now();
-    const { count, last } = secretClicksRef.current;
-    const within = now - last <= 1500;
-    const nextCount = within ? count + 1 : 1;
-    secretClicksRef.current = { count: nextCount, last: now };
-    if (nextCount >= 3) {
-      secretClicksRef.current = { count: 0, last: 0 };
-      navigate("/auth");
-    }
-  }, [navigate]);
 
   const storeStatus = useStoreStatus(
     settings
@@ -584,8 +571,8 @@ const Index = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {[
             { step: "1", icon: "🛒", title: "Elige tu producto", desc: "Explora el catálogo y añade lo que quieras al carrito." },
-            { step: "2", icon: "💬", title: "Escríbenos por WhatsApp", desc: "Confirmamos disponibilidad, precio final y forma de pago." },
-            { step: "3", icon: "🚚", title: "Recibe en casa", desc: "Coordinamos la entrega a tu dirección." },
+            { step: "2", icon: "✅", title: "Confirma tu pedido", desc: "Al finalizar, te abrimos WhatsApp automáticamente con tu pedido listo para enviar." },
+            { step: "3", icon: "📦", title: "Recibe tu pedido", desc: "Coordinamos contigo la forma de entrega." },
           ].map(({ step, icon, title, desc }) => (
             <div key={step} className="flex flex-col items-center text-center gap-3">
               <div className="relative">
@@ -606,7 +593,7 @@ const Index = () => {
       <footer className="mt-16 pb-8 border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground select-none">
-            <span onClick={handleSecretAccessClick}>{settings?.business_name ?? "Insignia"}</span>
+            <span>{settings?.business_name ?? "Insignia"}</span>
             {" "}© {new Date().getFullYear()}. Todos los derechos reservados.
           </p>
         </div>
