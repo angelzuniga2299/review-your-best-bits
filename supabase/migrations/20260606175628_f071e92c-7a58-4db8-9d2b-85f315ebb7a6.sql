@@ -39,10 +39,10 @@ DROP POLICY IF EXISTS "Admins can view all roles" ON public.user_roles;
 DROP POLICY IF EXISTS "Admins can insert roles" ON public.user_roles;
 DROP POLICY IF EXISTS "Admins can delete roles" ON public.user_roles;
 CREATE POLICY "Admins can view all roles" ON public.user_roles FOR SELECT TO authenticated
-USING (EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role = 'admin'));
+USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins can insert roles" ON public.user_roles FOR INSERT TO authenticated
-WITH CHECK (EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role = 'admin'));
+WITH CHECK (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins can delete roles" ON public.user_roles FOR DELETE TO authenticated
-USING (EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role = 'admin'));
+USING (public.has_role(auth.uid(), 'admin'));
 
 NOTIFY pgrst, 'reload schema';
