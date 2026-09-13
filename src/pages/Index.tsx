@@ -345,11 +345,16 @@ const Index = () => {
       items,
       total: price,
       currency: p.currency,
-      notes: "",
+      notes: cartNotes.trim(),
+      customerName: customerName,
+      customerPhone: customerPhone,
     });
     void createOrder({
       items,
       whatsappMessage: msg,
+      notes: cartNotes.trim() || undefined,
+      customer_name: customerName.trim() || null,
+      customer_phone: customerPhone.trim() || null,
       successToast: "Pedido registrado correctamente",
       onSuccess: () => setDetail(null),
     });
