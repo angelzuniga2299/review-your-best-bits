@@ -377,6 +377,8 @@ const Index = () => {
       total: cart.total,
       currency: cart.currency,
       notes: trimmedNotes,
+      customerName: customerName,
+      customerPhone: customerPhone,
     });
     void createOrder({
       items,
