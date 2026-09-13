@@ -305,6 +305,8 @@ const Index = () => {
     total: number;
     currency: Product["currency"];
     notes: string;
+    customerName: string;
+    customerPhone: string;
   }): string {
     const businessName = settings?.business_name ?? "Insignia";
 
@@ -317,6 +319,10 @@ const Index = () => {
 
     const trimmedNotes = opts.notes.trim();
     const notesBlock = trimmedNotes ? `\n\n*Notas:* ${trimmedNotes}` : "";
+    const trimmedName = opts.customerName.trim();
+    const trimmedPhone = opts.customerPhone.trim();
+    const customerBlock = trimmedName ? `\n\n*Cliente:* ${trimmedName}` : "";
+    const phoneBlock = trimmedPhone ? `\n*Teléfono:* ${trimmedPhone}` : "";
 
     const closedBlock = !storeStatus.isOpen
       ? `\n\n⏰ Pedido recibido. Te atenderemos cuando la tienda abra: ${storeStatus.nextChangeLabel}`
@@ -325,7 +331,7 @@ const Index = () => {
     return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
       opts.total,
       opts.currency
-    )}${notesBlock}${closedBlock}`;
+    )}${customerBlock}${phoneBlock}${notesBlock}${closedBlock}`;
   }
 
   function orderSingleByWhatsApp(p: Product) {
@@ -339,11 +345,16 @@ const Index = () => {
       items,
       total: price,
       currency: p.currency,
-      notes: "",
+      notes: cartNotes.trim(),
+      customerName: customerName,
+      customerPhone: customerPhone,
     });
     void createOrder({
       items,
       whatsappMessage: msg,
+      notes: cartNotes.trim() || undefined,
+      customer_name: customerName.trim() || null,
+      customer_phone: customerPhone.trim() || null,
       successToast: "Pedido registrado correctamente",
       onSuccess: () => setDetail(null),
     });
@@ -366,6 +377,8 @@ const Index = () => {
       total: cart.total,
       currency: cart.currency,
       notes: trimmedNotes,
+      customerName: customerName,
+      customerPhone: customerPhone,
     });
     void createOrder({
       items,
