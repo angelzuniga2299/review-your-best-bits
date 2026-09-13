@@ -64,8 +64,8 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
 
       <div className="p-5 flex-1 flex flex-col justify-between gap-4">
         <div>
-          <div className="flex items-baseline justify-between gap-3 mb-1 flex-nowrap">
-            <h3 className="font-bold text-base leading-snug truncate flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3 mb-1 flex-nowrap">
+            <h3 className="font-bold text-base leading-snug line-clamp-2 flex-1 min-w-0">
               {p.name}
             </h3>
             <span
@@ -99,7 +99,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onOpen(p);
+              onAdd(p, e.currentTarget);
             }}
             disabled={out}
             className={cn(
@@ -108,16 +108,16 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
               "disabled:opacity-40 disabled:pointer-events-none"
             )}
           >
-            <Eye className="w-4 h-4" />
-            <span>Ver detalles</span>
+            <Plus className="w-5 h-5" />
+            <span>Añadir</span>
           </button>
           <button
             type="button"
-            aria-label={`Añadir ${p.name} al carrito`}
+            aria-label={`Ver detalles de ${p.name}`}
             disabled={out}
             onClick={(e) => {
               e.stopPropagation();
-              onAdd(p, e.currentTarget);
+              onOpen(p);
             }}
             className={cn(
               "w-11 h-11 rounded-2xl border-2 border-secondary text-secondary flex items-center justify-center transition-all",
@@ -125,7 +125,7 @@ function ProductCardImpl({ product: p, onOpen, onAdd }: Props) {
               "disabled:opacity-40 disabled:pointer-events-none"
             )}
           >
-            <Plus className="w-5 h-5" />
+            <Eye className="w-4 h-4" />
           </button>
         </div>
       </div>
