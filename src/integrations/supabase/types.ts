@@ -62,6 +62,7 @@ export type Database = {
           public_id: string
           status: string
           total: number
+          totals: Json | null
           updated_at: string
         }
         Insert: {
@@ -75,6 +76,7 @@ export type Database = {
           public_id?: string
           status?: string
           total?: number
+          totals?: Json | null
           updated_at?: string
         }
         Update: {
@@ -88,6 +90,7 @@ export type Database = {
           public_id?: string
           status?: string
           total?: number
+          totals?: Json | null
           updated_at?: string
         }
         Relationships: []
