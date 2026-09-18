@@ -8,6 +8,7 @@ type Props = {
   items: CartItem[];
   total: number;
   currency: Currency;
+  totals: Record<string, number>;
   notes: string;
   onNotesChange: (value: string) => void;
   customerName: string;
@@ -26,6 +27,7 @@ export function CartDrawer({
   items,
   total,
   currency,
+  totals,
   notes,
   onNotesChange,
   customerName,
@@ -131,10 +133,19 @@ export function CartDrawer({
         </div>
 
         <footer className="p-6 border-t border-border bg-muted/40 space-y-3">
-          <div className="flex justify-between items-baseline">
-            <span className="text-muted-foreground text-sm">Total aproximado</span>
-            <span className="text-lg font-semibold">{formatCurrency(total, currency)}</span>
-          </div>
+          {Object.keys(totals).length <= 1 ? (
+            <div className="flex justify-between items-baseline">
+              <span className="text-muted-foreground text-sm">Total aproximado</span>
+              <span className="text-lg font-semibold">{formatCurrency(total, currency)}</span>
+            </div>
+          ) : (
+            Object.entries(totals).map(([code, amount]) => (
+              <div key={code} className="flex justify-between items-baseline">
+                <span className="text-muted-foreground text-sm">{code}</span>
+                <span className="text-lg font-semibold">{formatCurrency(amount, code as Currency)}</span>
+              </div>
+            ))
+          )}
           {items.length > 0 && (
             <p className="text-xs text-muted-foreground">
               Los precios se confirman al finalizar el pedido.

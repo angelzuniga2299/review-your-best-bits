@@ -23,7 +23,7 @@ export function StatsTab() {
       if (oRes.error) throw oRes.error;
       return {
         products: (pRes.data ?? []) as Product[],
-        orders: (oRes.data ?? []) as Order[],
+        orders: (oRes.data ?? []) as unknown as Order[],
       };
     },
   });
