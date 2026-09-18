@@ -245,12 +245,17 @@ const Index = () => {
 
     const total = opts.items.reduce((s, it) => s + it.price * it.qty, 0);
     const currency = opts.items[0]?.currency ?? cart.currency;
+    const totals: Record<string, number> = {};
+    for (const it of opts.items) {
+      totals[it.currency] = (totals[it.currency] ?? 0) + it.price * it.qty;
+    }
 
     try {
       const { error } = await supabase.from("orders").insert({
         items: opts.items,
         total,
         currency,
+        totals,
         status: "pendiente",
         notes: opts.notes ?? null,
         customer_name: opts.customer_name ?? null,
@@ -307,6 +312,7 @@ const Index = () => {
     notes: string;
     customerName: string;
     customerPhone: string;
+    totals: Record<string, number>;
   }): string {
     const businessName = settings?.business_name ?? "Insignia";
 
@@ -328,10 +334,15 @@ const Index = () => {
       ? `\n\n⏰ Pedido recibido. Te atenderemos cuando la tienda abra: ${storeStatus.nextChangeLabel}`
       : "";
 
-    return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n*Total aprox:* ${formatCurrency(
-      opts.total,
-      opts.currency
-    )}${customerBlock}${phoneBlock}${notesBlock}${closedBlock}`;
+    const totalEntries = Object.entries(opts.totals);
+    const totalLines =
+      totalEntries.length <= 1
+        ? `*Total aprox:* ${formatCurrency(opts.total, opts.currency)}`
+        : totalEntries
+            .map(([code, amount]) => `*Total ${code}:* ${formatCurrency(amount, code as Product["currency"])}`)
+            .join("\n");
+
+    return `Hola *${businessName}*, quiero hacer este pedido:\n\n${lines}\n\n${totalLines}${customerBlock}${phoneBlock}${notesBlock}${closedBlock}`;
   }
 
   function orderSingleByWhatsApp(p: Product) {
@@ -359,6 +370,7 @@ const Index = () => {
       notes: trimmedNotes,
       customerName: customerName,
       customerPhone: customerPhone,
+      totals: cart.totals,
     });
     void createOrder({
       items,
@@ -608,6 +620,7 @@ const Index = () => {
         items={cart.items}
         total={cart.total}
         currency={cart.currency}
+        totals={cart.totals}
         notes={cartNotes}
         onNotesChange={setCartNotes}
         customerName={customerName}
