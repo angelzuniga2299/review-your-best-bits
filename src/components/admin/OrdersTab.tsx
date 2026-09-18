@@ -135,12 +135,14 @@ export function OrdersTab() {
   const periodSummary = (() => {
     const all = orders ?? [];
     const inPeriod = startDate ? all.filter((o) => new Date(o.created_at) >= startDate) : all;
-    const total = inPeriod.reduce(
-      (s, o) => (o.status === "vendido" ? s + (Number(o.total) || 0) : s),
-      0
-    );
-    const currency = inPeriod.find((o) => o.status === "vendido")?.currency ?? "USD";
-    return { count: inPeriod.length, total, currency };
+    const totals: Record<string, number> = {};
+    for (const o of inPeriod) {
+      if (o.status !== "vendido") continue;
+      for (const [code, amount] of Object.entries(orderTotals(o))) {
+        totals[code] = (totals[code] || 0) + amount;
+      }
+    }
+    return { count: inPeriod.length, totals };
   })();
 
   // Group orders by day label (Hoy, Ayer, fecha) preserving sort order.
