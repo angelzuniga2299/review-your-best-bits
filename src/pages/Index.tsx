@@ -260,7 +260,7 @@ const Index = () => {
         notes: opts.notes ?? null,
         customer_name: opts.customer_name ?? null,
         customer_phone: opts.customer_phone ?? null,
-      });
+      } as Record<string, unknown>);
       if (error) throw error;
 
       await Promise.all([
