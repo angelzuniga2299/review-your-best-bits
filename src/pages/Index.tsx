@@ -335,29 +335,9 @@ const Index = () => {
   }
 
   function orderSingleByWhatsApp(p: Product) {
-    if (processingLockRef.current) return;
-    trackEvent("order_whatsapp_single", { productId: p.id });
-    const price = getSalePrice(p);
-    const items: OrderItem[] = [
-      { productId: p.id, name: p.name, price, qty: 1, currency: p.currency },
-    ];
-    const msg = buildWhatsAppMessage({
-      items,
-      total: price,
-      currency: p.currency,
-      notes: cartNotes.trim(),
-      customerName: customerName,
-      customerPhone: customerPhone,
-    });
-    void createOrder({
-      items,
-      whatsappMessage: msg,
-      notes: cartNotes.trim() || undefined,
-      customer_name: customerName.trim() || null,
-      customer_phone: customerPhone.trim() || null,
-      successToast: "Pedido registrado correctamente",
-      onSuccess: () => setDetail(null),
-    });
+    handleAdd(p);
+    setDetail(null);
+    setCartOpen(true);
   }
 
   function checkout() {
