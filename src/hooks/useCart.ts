@@ -106,20 +106,22 @@ export function useCart() {
 
   const clear = useCallback(() => setItems([]), []);
 
-  const { count, total, currency } = useMemo(() => {
+  const { count, total, currency, totals } = useMemo(() => {
     let c = 0;
     let t = 0;
+    const byCurrency: Record<string, number> = {};
     for (const x of items) {
       c += x.qty;
       t += x.price * x.qty;
+      byCurrency[x.currency] = (byCurrency[x.currency] ?? 0) + x.price * x.qty;
     }
-    return { count: c, total: t, currency: items[0]?.currency ?? "USD" };
+    return { count: c, total: t, currency: items[0]?.currency ?? "USD", totals: byCurrency };
   }, [items]);
 
   // Memoize return so consumers see a stable object reference when nothing
   // changed — keeps React.memo / useEffect deps from firing unnecessarily.
   return useMemo(
-    () => ({ items, add, remove, setQty, clear, count, total, currency }),
-    [items, add, remove, setQty, clear, count, total, currency]
+    () => ({ items, add, remove, setQty, clear, count, total, currency, totals }),
+    [items, add, remove, setQty, clear, count, total, currency, totals]
   );
 }
