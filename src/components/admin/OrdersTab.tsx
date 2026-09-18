@@ -60,6 +60,15 @@ const BADGE: Record<OrderStatus, string> = {
   cancelado: "bg-destructive/15 text-destructive",
 };
 
+// Reads an order's per-currency totals object, falling back to a single
+// entry derived from the legacy total/currency fields so old orders still
+// render correctly.
+function orderTotals(o: Order): Record<string, number> {
+  const t = o.totals as Record<string, number> | null | undefined;
+  if (t && typeof t === "object" && Object.keys(t).length > 0) return t;
+  return { [o.currency ?? "USD"]: Number(o.total) || 0 };
+}
+
 export function OrdersTab() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
